@@ -3081,7 +3081,6 @@ function downloadCSV(rows,filename){
     fbSetProgress(100, '✅ Load complete!');
     setTimeout(function(){ fbHideLoading(); document.getElementById('loginOverlay').classList.remove('hidden'); }, 500);
 
-  } catch(e){ console.error('Firebase render error:',e); fbHideLoading(); document.getElementById('loginOverlay').classList.remove('hidden'); }
     } catch(renderErr){
       console.error('Render error:',renderErr);
       fbHideLoading();
