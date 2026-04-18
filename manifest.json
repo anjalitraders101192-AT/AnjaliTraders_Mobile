@@ -1,0 +1,24 @@
+{
+  "name": "Anjali Traders IMS",
+  "short_name": "AT IMS",
+  "description": "Anjali Traders Inventory Management System",
+  "start_url": "./AnjaliTraders_IMS_FIXED_4_.html",
+  "display": "standalone",
+  "background_color": "#071a1f",
+  "theme_color": "#00e5ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
