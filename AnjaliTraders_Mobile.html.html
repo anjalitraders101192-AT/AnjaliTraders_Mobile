@@ -563,7 +563,6 @@ body::before {
   <!-- NAV TABS -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="showTab('dashboard')">⬡ Dashboard</button>
-    <button class="tab-btn" onclick="showTab('products')">◈ Products</button>
     <button class="tab-btn" onclick="showTab('purchase')">⬇ Purchase</button>
     <button class="tab-btn" onclick="showTab('sale')">⬆ Sale</button>
     <button class="tab-btn" onclick="showTab('transactions')">≡ History</button>
@@ -610,9 +609,6 @@ body::before {
       </div>
       <div class="quick-btn" onclick="showTab('sale')">
         <div class="q-icon">💰</div><div class="q-label">Sale</div>
-      </div>
-      <div class="quick-btn" onclick="showTab('products')">
-        <div class="q-icon">📦</div><div class="q-label">Products</div>
       </div>
       <div class="quick-btn" onclick="showTab('reports')">
         <div class="q-icon">📊</div><div class="q-label">Reports</div>
@@ -909,9 +905,6 @@ v>
     <button class="nav-btn active" onclick="showPage('dashboard')">
       <span class="n-icon">🏠</span><span class="n-label">Home</span>
     </button>
-    <button class="nav-btn" onclick="showPage('products')">
-      <span class="n-icon">📦</span><span class="n-label">Products</span>
-    </button>
     <button class="nav-btn" onclick="showPage('purchase')">
       <span class="n-icon">🛒</span><span class="n-label">Buy</span>
     </button>
@@ -941,37 +934,156 @@ window.addEventListener('load', () => {
   }, 3600);
 });
 
-// ===== EXCEL PRE-LOADED DATA =====
-const EXCEL_PRODUCTS = [];
+// ===== FIREBASE CONFIG (same as main software) =====
+const _fbConfig = {
+  apiKey: "AIzaSyAPsa0-zAbX3etvERIge24seZeJ4swAZZc",
+  authDomain: "anjalitradersims.firebaseapp.com",
+  projectId: "anjalitradersims",
+  storageBucket: "anjalitradersims.firebasestorage.app",
+  messagingSenderId: "236201306103",
+  appId: "1:236201306103:web:77bf64032c691616fcf0f2"
+};
+if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(_fbConfig);
+const _db = firebase.firestore();
+const _auth = firebase.auth();
 
 // ===== DATA =====
-let products = JSON.parse(localStorage.getItem('at_products') || 'null');
-if (!products || products.length === 0) {
-  products = EXCEL_PRODUCTS;
-  localStorage.setItem('at_products', JSON.stringify(products));
-}
+const EXCEL_PRODUCTS = [];
+let products = [];
 let transactions = JSON.parse(localStorage.getItem('at_transactions') || '[]');
-let vendors = JSON.parse(localStorage.getItem('at_vendors') || '[]');
+let vendors = [];
 let customers = JSON.parse(localStorage.getItem('at_customers') || '[]');
+let _unsubProducts = null;
+
+// Clear old localStorage product data (force Firestore)
+localStorage.removeItem('at_products');
+
+// Load products from Firestore (realtime)
+function startProductsListener() {
+  if (_unsubProducts) _unsubProducts();
+  _unsubProducts = _db.collection('products').onSnapshot(function(snap) {
+    products = snap.docs.map(function(d) {
+      var p = d.data();
+      // Map main software fields to mobile app fields
+      return {
+        id: p.id || d.id,
+        name: p.name || '',
+        category: p.category || p.desc || '',
+        unit: p.unit || 'PCS',
+        stock: Number(p.stock) || 0,
+        minStock: Number(p.minStock) || 5,
+        buyPrice: Number(p.price || p.buyPrice) || 0,
+        sellPrice: Number(p.sellPrice) || 0,
+        hsn: p.hsn || ''
+      };
+    });
+    renderDashboard();
+    refreshProductSelects();
+  }, function() {
+    products = [];
+    renderDashboard();
+  });
+}
+
+// Load vendors from Firestore
+function loadVendors() {
+  _db.collection('vendors').get().then(function(snap) {
+    vendors = snap.docs.map(function(d) {
+      var v = d.data();
+      return v.firmName || v.name || '';
+    }).filter(Boolean);
+    updateVendorDatalist();
+  }).catch(function() {
+    vendors = [];
+    updateVendorDatalist();
+  });
+}
+
+// Load customers from Firestore
+function loadCustomers() {
+  _db.collection('customers').get().then(function(snap) {
+    customers = snap.docs.map(function(d) {
+      var v = d.data();
+      return v.name || v.firmName || '';
+    }).filter(Boolean);
+    updateCustomerDatalist();
+  }).catch(function() {
+    customers = JSON.parse(localStorage.getItem('at_customers') || '[]');
+    updateCustomerDatalist();
+  });
+}
+
+// Load transactions
+function loadTransactions() {
+  _db.collection('mobile_transactions').orderBy('id','desc').limit(200).get().then(function(snap) {
+    if (!snap.empty) transactions = snap.docs.map(function(d){ return d.data(); });
+    else transactions = JSON.parse(localStorage.getItem('at_transactions') || '[]');
+    renderTransactions();
+    renderDashboard();
+  }).catch(function() {
+    transactions = JSON.parse(localStorage.getItem('at_transactions') || '[]');
+  });
+}
+
+// Update product stock in Firestore
+function updateProductStockInFS(productId, newStock, newBuyPrice) {
+  var upd = { stock: newStock };
+  if (newBuyPrice !== undefined) upd.price = newBuyPrice;
+  _db.collection('products').doc(String(productId)).update(upd).catch(function(){});
+}
+
+// Save transaction to Firestore
+function saveTransactionToFS(txn) {
+  _db.collection('mobile_transactions').doc(String(txn.id)).set(txn).catch(function(){});
+}
+
+// Refresh all product dropdowns
+function refreshProductSelects() {
+  renderProducts();
+  var purSel = document.getElementById('purProduct');
+  if (purSel) {
+    var cur = purSel.value;
+    purSel.innerHTML = '<option value="">-- Select Product --</option>' +
+      products.map(function(p){ return '<option value="'+p.id+'">'+p.name+' ('+p.stock+' '+p.unit+')</option>'; }).join('');
+    if (cur) purSel.value = cur;
+  }
+  document.querySelectorAll('select[id$="_prod"]').forEach(function(sel) {
+    var cur = sel.value;
+    sel.innerHTML = '<option value="">-- Select Product --</option>' +
+      products.filter(function(p){ return p.stock > 0; }).map(function(p) {
+        return '<option value="'+p.id+'" data-stock="'+p.stock+'" data-unit="'+p.unit+'" data-price="'+p.sellPrice+'">'+p.name+'</option>';
+      }).join('');
+    if (cur) sel.value = cur;
+  });
+}
+
+// Firebase init with anonymous auth
+function initFirebase() {
+  _auth.signInAnonymously().then(function() {
+    startProductsListener();
+    loadVendors();
+    loadCustomers();
+    loadTransactions();
+  }).catch(function(e) {
+    console.log('Auth error:', e);
+    startProductsListener(); // Try without auth anyway
+    loadVendors();
+  });
+}
+window.addEventListener('load', function(){ setTimeout(initFirebase, 600); });
 
 function save() {
-  localStorage.setItem('at_products', JSON.stringify(products));
   localStorage.setItem('at_transactions', JSON.stringify(transactions));
-  localStorage.setItem('at_vendors', JSON.stringify(vendors));
-  localStorage.setItem('at_customers', JSON.stringify(customers));
 }
 
-// Auto-save vendor name
 function saveVendorName(name) {
   name = name.trim();
   if (name && !vendors.includes(name)) {
     vendors.push(name);
-    localStorage.setItem('at_vendors', JSON.stringify(vendors));
     updateVendorDatalist();
   }
 }
 
-// Auto-save customer name
 function saveCustomerName(name) {
   name = name.trim();
   if (name && !customers.includes(name)) {
@@ -1808,5 +1920,10 @@ function installApp() {
 <div id="installBtn" style="display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0a1e40,#0d2a5e);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:30px;padding:10px 22px;font-family:'Exo 2',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;z-index:9999;box-shadow:0 4px 20px rgba(10,30,64,0.3);align-items:center;gap:8px;white-space:nowrap;" onclick="installApp()">
   📲 &nbsp;Add to Home Screen
 </div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 </body>
 </html>
