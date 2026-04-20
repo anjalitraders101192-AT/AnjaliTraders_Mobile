@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0">
 <title>Anjali Traders 01 V01</title>
 <link rel="manifest" href="manifest.json">
@@ -577,25 +582,25 @@ body::before {
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card" data-icon="📦">
+      <div class="stat-card">
         <div class="glint"></div>
         <div class="stat-label">Total Products</div>
         <div class="stat-value cv-sky" id="totalProducts">0</div>
         <div class="stat-sub">Items in inventory</div>
       </div>
-      <div class="stat-card" data-icon="💰">
+      <div class="stat-card">
         <div class="glint"></div>
         <div class="stat-label">Today's Sales</div>
         <div class="stat-value cv-green" id="todaySales">₹0</div>
         <div class="stat-sub">Revenue today</div>
       </div>
-      <div class="stat-card" data-icon="🛒">
+      <div class="stat-card">
         <div class="glint"></div>
         <div class="stat-label">Today's Purchase</div>
         <div class="stat-value cv-yellow" id="todayPurchase">₹0</div>
         <div class="stat-sub">Spent today</div>
       </div>
-      <div class="stat-card" data-icon="⚠️" id="lowStockCard" style="cursor:pointer;" title="Click to view details">
+      <div class="stat-card" id="lowStockCard" style="cursor:pointer;" title="Click to view details">
         <div class="glint"></div>
         <div class="stat-label">Low Stock</div>
         <div class="stat-value cv-red" id="lowStockCount">0</div>
@@ -943,7 +948,7 @@ const _fbConfig = {
   messagingSenderId: "236201306103",
   appId: "1:236201306103:web:77bf64032c691616fcf0f2"
 };
-if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(_fbConfig);
+firebase.initializeApp(_fbConfig);
 const _db = firebase.firestore();
 const _auth = firebase.auth();
 
@@ -1920,10 +1925,5 @@ function installApp() {
 <div id="installBtn" style="display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0a1e40,#0d2a5e);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:30px;padding:10px 22px;font-family:'Exo 2',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;z-index:9999;box-shadow:0 4px 20px rgba(10,30,64,0.3);align-items:center;gap:8px;white-space:nowrap;" onclick="installApp()">
   📲 &nbsp;Add to Home Screen
 </div>
-
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 </body>
 </html>
