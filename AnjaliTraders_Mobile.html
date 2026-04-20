@@ -561,7 +561,7 @@ body::before {
     </div>
     <div class="topbar-right">
       <div class="top-date" id="currentDate"></div>
-      <div class="notif-btn">🔔</div>
+      <div class="notif-btn" id="bellBtn" onclick="bellClick()" style="position:relative;">🔔<span id="bellBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e11d48;color:#fff;font-size:9px;font-weight:700;border-radius:50%;min-width:16px;height:16px;line-height:16px;text-align:center;padding:0 3px;">0</span></div>
     </div>
   </div>
 
@@ -591,13 +591,13 @@ body::before {
       <div class="stat-card">
         <div class="glint"></div>
         <div class="stat-label">Today's Sales</div>
-        <div class="stat-value cv-green" id="todaySales">₹0</div>
+        <div class="stat-value cv-green" id="todaySales">0</div>
         <div class="stat-sub">Revenue today</div>
       </div>
       <div class="stat-card">
         <div class="glint"></div>
         <div class="stat-label">Today's Purchase</div>
-        <div class="stat-value cv-yellow" id="todayPurchase">₹0</div>
+        <div class="stat-value cv-yellow" id="todayPurchase">0</div>
         <div class="stat-sub">Spent today</div>
       </div>
       <div class="stat-card" id="lowStockCard" style="cursor:pointer;" title="Click to view details">
@@ -634,12 +634,9 @@ body::before {
       <!-- Results Dropdown -->
       <div id="quickSearchResults" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border-radius:0 0 14px 14px;border:2px solid rgba(14,165,233,0.2);border-top:none;z-index:500;max-height:300px;overflow-y:auto;box-shadow:0 8px 24px rgba(14,165,233,0.15);"></div>
     </div>
-  </di
-
     <div class="section-title">⚠ Low Stock Alerts</div>
     <div id="alertsList"></div>
-
-v>
+  </div>
 
   <!-- ===== STOCK DETAIL MODAL ===== -->
   <div id="stockDetailModal" style="display:none;position:fixed;inset:0;z-index:9991;background:rgba(10,30,64,0.6);backdrop-filter:blur(6px);">
@@ -722,11 +719,11 @@ v>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Purchase Price (₹)</label>
+          <label class="form-label">Purchase Price</label>
           <input class="form-input" id="prodBuyPrice" type="number" placeholder="0.00">
         </div>
         <div class="form-group">
-          <label class="form-label">Sale Price (₹)</label>
+          <label class="form-label">Sale Price</label>
           <input class="form-input" id="prodSellPrice" type="number" placeholder="0.00">
         </div>
       </div>
@@ -778,7 +775,7 @@ v>
           <input class="form-input" id="purQty" type="number" placeholder="0">
         </div>
         <div class="form-group">
-          <label class="form-label">Rate per Unit (₹)</label>
+          <label class="form-label">Rate per Unit</label>
           <input class="form-input" id="purRate" type="number" placeholder="0.00">
         </div>
       </div>
@@ -838,7 +835,7 @@ v>
         margin-bottom:14px;display:none;
       ">
         <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Grand Total</div>
-        <div style="font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--green);" id="saleGrandTotalAmt">₹0</div>
+        <div style="font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--green);" id="saleGrandTotalAmt">0</div>
       </div>
 
       <!-- Remarks -->
@@ -863,7 +860,7 @@ v>
 
     <div class="report-card">
       <div class="section-title" style="margin-bottom:8px">💰 Sales Summary</div>
-      <div class="report-big pl-positive" id="totalSalesAmt">₹0</div>
+      <div class="report-big pl-positive" id="totalSalesAmt">0</div>
       <div class="report-row">
         <span class="report-key">Total Transactions</span>
         <span class="report-val cv-sky" id="totalSalesTxn">0</span>
@@ -876,7 +873,7 @@ v>
 
     <div class="report-card">
       <div class="section-title" style="margin-bottom:8px">🛒 Purchase Summary</div>
-      <div class="report-big cv-sky" id="totalPurchaseAmt">₹0</div>
+      <div class="report-big cv-sky" id="totalPurchaseAmt">0</div>
       <div class="report-row">
         <span class="report-key">Total Transactions</span>
         <span class="report-val cv-sky" id="totalPurchaseTxn">0</span>
@@ -889,7 +886,7 @@ v>
 
     <div class="report-card">
       <div class="section-title" style="margin-bottom:8px">📊 Profit / Loss</div>
-      <div class="report-big" id="profitLoss">₹0</div>
+      <div class="report-big" id="profitLoss">0</div>
       <div class="report-row">
         <span class="report-key">Total Products</span>
         <span class="report-val" id="rTotalProds">0</span>
@@ -1206,8 +1203,8 @@ function renderProducts() {
         <div class="product-name">${p.name}</div>
         <div class="product-meta">${p.category} &bull; ${p.unit}</div>
         <div class="product-prices">
-          <span class="price-tag price-buy">Buy ₹${p.buyPrice}</span>
-          <span class="price-tag price-sell">Sell ₹${p.sellPrice}</span>
+          <span class="price-tag price-buy">Buy ${p.buyPrice}</span>
+          <span class="price-tag price-sell">Sell ${p.sellPrice}</span>
         </div>
       </div>
       <div class="prod-right">
@@ -1276,7 +1273,7 @@ function addSaleRow() {
         <input class="form-input" id="${rowId}_qty" type="number" placeholder="0" min="1" oninput="calcGrandTotal()" style="background:#fff;">
       </div>
       <div>
-        <label class="form-label">Rate (₹)</label>
+        <label class="form-label">Rate</label>
         <input class="form-input" id="${rowId}_rate" type="number" placeholder="0.00" oninput="calcGrandTotal()" style="background:#fff;">
       </div>
     </div>
@@ -1326,14 +1323,14 @@ function calcGrandTotal() {
     const rate = parseFloat(document.getElementById(rowId + '_rate')?.value) || 0;
     const total = qty * rate;
     const totalDiv = document.getElementById(rowId + '_total');
-    if (totalDiv) totalDiv.textContent = total > 0 ? '₹' + total.toLocaleString('en-IN') : '';
+    if (totalDiv) totalDiv.textContent = total > 0 ? total.toLocaleString('en-IN') : '';
     grand += total;
   });
   const grandDiv = document.getElementById('saleGrandTotal');
   const grandAmt = document.getElementById('saleGrandTotalAmt');
   if (grandDiv && grandAmt) {
     grandDiv.style.display = grand > 0 ? 'block' : 'none';
-    grandAmt.textContent = '₹' + grand.toLocaleString('en-IN');
+    grandAmt.textContent = grand.toLocaleString('en-IN');
   }
 }
 
@@ -1450,10 +1447,11 @@ function renderDashboard() {
   const todayT = transactions.filter(t=>t.date===today);
   const sAmt = todayT.filter(t=>t.type==='sale').reduce((s,t)=>s+t.amount,0);
   const pAmt = todayT.filter(t=>t.type==='purchase').reduce((s,t)=>s+t.amount,0);
-  document.getElementById('todaySales').textContent = '₹'+sAmt.toLocaleString('en-IN');
-  document.getElementById('todayPurchase').textContent = '₹'+pAmt.toLocaleString('en-IN');
+  document.getElementById('todaySales').textContent = sAmt.toLocaleString('en-IN');
+  document.getElementById('todayPurchase').textContent = pAmt.toLocaleString('en-IN');
   const low = products.filter(p=>p.stock<=p.minStock);
   document.getElementById('lowStockCount').textContent = low.length;
+  updateBellBadge();
   const alerts = document.getElementById('alertsList');
   if (!low.length) {
     alerts.innerHTML = `<div class="empty-state" style="padding:16px"><div class="e-icon">✅</div>All products have sufficient stock</div>`;
@@ -1852,6 +1850,55 @@ function installApp() {
     });
   }
 }
+
+// ===== BELL LOW STOCK NOTIFICATION =====
+function updateBellBadge() {
+  const low = products.filter(p => p.stock <= p.minStock);
+  const badge = document.getElementById('bellBadge');
+  if (!badge) return;
+  if (low.length > 0) {
+    badge.textContent = low.length;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function bellClick() {
+  const low = products.filter(p => p.stock <= (p.minStock || 5));
+  const out = products.filter(p => p.stock <= 0);
+  const msg = out.length
+    ? 'Out of Stock: ' + out.length + ' | Low Stock: ' + low.length
+    : low.length ? 'Low Stock: ' + low.length + ' products need attention'
+    : 'All products have sufficient stock';
+  showToast(out.length ? '🔴 ' + msg : low.length ? '🟡 ' + msg : '✅ ' + msg,
+    out.length ? '#e11d48' : low.length ? '#d97706' : '#059669');
+  showTab('dashboard');
+}
+
+// Bell sound using Web Audio API
+function playBellSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
+    g.gain.setValueAtTime(0.3, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+    o.start(ctx.currentTime);
+    o.stop(ctx.currentTime + 1);
+  } catch(e) {}
+}
+
+// Check every 5 minutes — ring bell if low stock
+setInterval(function() {
+  const low = products.filter(p => p.stock <= (p.minStock || 5));
+  if (low.length > 0) playBellSound();
+  updateBellBadge();
+}, 5 * 60 * 1000);
+
 </script>
 
 <!-- ===== LOW STOCK MODAL ===== -->
