@@ -22,6 +22,7 @@
   document.getElementById('manifest-link').setAttribute('href', URL.createObjectURL(blob));
 })();
 </script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --navy: #0a1e40;
@@ -35,8 +36,10 @@
   --muted: #6b8db0;
   --border: rgba(14,165,233,0.2);
 }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
-body { background:#eef2f7; min-height:100vh; max-width:500px; margin:0 auto; overflow-x:hidden; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; font-family:'Rajdhani','Segoe UI',system-ui,-apple-system,sans-serif; }
+.brand, .modal-header h3, .section-title, .stat-label, .tab-btn { font-family:'Orbitron','Rajdhani',sans-serif; }
+.stat-value, .card-amount, .stock-val { font-family:'Orbitron',monospace; }
+body { background:#eef2f7; min-height:100vh; max-width:500px; margin:0 auto; overflow-x:hidden; color:var(--text); }
 
 /* Topbar */
 .topbar { background:linear-gradient(135deg,#0a1e40,#0d2a5e); padding:14px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(56,189,248,0.2); position:sticky; top:0; z-index:100; }
@@ -46,7 +49,7 @@ body { background:#eef2f7; min-height:100vh; max-width:500px; margin:0 auto; ove
 .bell-badge { position:absolute; top:-4px; right:-4px; background:#e11d48; color:white; font-size:10px; font-weight:bold; border-radius:20px; min-width:18px; height:18px; line-height:18px; text-align:center; padding:0 4px; display:none; }
 
 /* Tab Nav */
-.nav-tabs { display:flex; overflow-x:auto; background:#fff; border-bottom:2px solid rgba(14,165,233,0.1); scrollbar-width:none; }
+.nav-tabs { display:flex; overflow-x:auto; background:#fff; border-bottom:2px solid rgba(14,165,233,0.1); scrollbar-width:none; position:sticky; top:70px; z-index:90; }
 .nav-tabs::-webkit-scrollbar { display:none; }
 .tab-btn { flex:none; padding:11px 13px; font-size:11px; font-weight:600; color:#6b8db0; background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
 .tab-btn.active { color:#0ea5e9; border-bottom-color:#0ea5e9; }
@@ -98,7 +101,12 @@ body { background:#eef2f7; min-height:100vh; max-width:500px; margin:0 auto; ove
 
 /* Search Box */
 .search-box { background:#fff; border-radius:20px; border:1px solid var(--border); padding:10px 14px; display:flex; align-items:center; gap:8px; margin-bottom:16px; }
-.search-box input { flex:1; border:none; outline:none; font-size:14px; background:transparent; }
+.search-box input { flex:1; border:none; outline:none; font-size:14px; background:transparent; font-family:'Rajdhani',sans-serif; }
+
+/* Sticky section title for list pages */
+.sticky-title { position:sticky; top:114px; z-index:51; background:#eef2f7; padding-top:6px; padding-bottom:2px; margin-bottom:0; }
+/* Sticky search bars for list pages */
+.sticky-search { position:sticky; top:152px; z-index:50; background:#eef2f7; padding-bottom:6px; margin-bottom:0; }
 
 /* Empty State */
 .empty-state { text-align:center; padding:40px 20px; color:#9ab8d0; font-size:14px; }
@@ -179,13 +187,15 @@ window.addEventListener("load", function() {
       <div class="sub">Inventory Management System</div>
     </div>
   </div>
-  <div style="text-align:right;line-height:1.3;">
-    <div id="topbarDate" style="font-size:12px;color:#38bdf8;font-weight:700;letter-spacing:0.5px;white-space:nowrap;"></div>
-    <div id="topbarDay" style="font-size:10px;color:rgba(180,220,248,0.6);letter-spacing:0.5px;"></div>
-  </div>
-  <div class="notif-btn" id="bellBtn">
-    🔔
-    <span class="bell-badge" id="bellBadge">0</span>
+  <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+    <div style="text-align:right;line-height:1.3;">
+      <div id="topbarDate" style="font-size:12px;color:#38bdf8;font-weight:700;letter-spacing:0.5px;white-space:nowrap;"></div>
+      <div id="topbarDay" style="font-size:10px;color:rgba(180,220,248,0.6);letter-spacing:0.5px;"></div>
+    </div>
+    <div class="notif-btn" id="bellBtn">
+      🔔
+      <span class="bell-badge" id="bellBadge">0</span>
+    </div>
   </div>
 </div>
 
@@ -217,14 +227,14 @@ window.addEventListener("load", function() {
 <div id="dashboard" class="page active">
 
   <!-- Greeting Bar -->
-  <div id="greetingBar" style="background:linear-gradient(135deg,#0a1e40 0%,#0d2a5e 60%,#0f3a7a 100%);border-radius:20px;padding:16px 20px;margin-bottom:16px;border:1px solid rgba(56,189,248,0.25);box-shadow:0 4px 18px rgba(14,165,233,0.12);display:flex;align-items:center;justify-content:space-between;">
+  <div id="greetingBar" style="background:linear-gradient(135deg,#0a1e40 0%,#0d2a5e 60%,#0f3a7a 100%);border-radius:20px;padding:16px 20px;margin-bottom:16px;border:1px solid rgba(56,189,248,0.25);box-shadow:0 4px 18px rgba(14,165,233,0.12);display:flex;align-items:center;justify-content:space-between;position:sticky;top:120px;z-index:50;">
     <div>
       <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:0.5px;" id="greetingText">Good Day! ☀️</div>
       <div style="font-size:12px;color:rgba(180,220,248,0.75);margin-top:5px;" id="greetingSub">Here's your inventory overview.</div>
+      <div id="tempDisplay" style="font-size:13px;color:#38bdf8;margin-top:3px;font-weight:600;display:none;"></div>
     </div>
     <div style="text-align:center;min-width:54px;">
       <div style="font-size:36px;line-height:1;" id="greetingIcon">☀️</div>
-      <div style="font-size:13px;color:#38bdf8;font-weight:800;margin-top:4px;" id="greetingTemp">--°C</div>
     </div>
   </div>
   <div class="stat-grid">
@@ -258,8 +268,8 @@ window.addEventListener("load", function() {
 
 <!-- PURCHASE -->
 <div id="purchase" class="page">
-  <div class="section-title">🛒 Purchase Records</div>
-  <div class="search-box">
+  <div class="section-title sticky-title">🛒 Purchase Records</div>
+  <div class="search-box sticky-search">
     <span>🔍</span>
     <input type="text" id="purchaseSearch" oninput="filterList('purchase')" placeholder="Search by product / vendor...">
     <span onclick="clearFilter('purchase')" style="display:none;cursor:pointer;color:#6b8db0;" id="purchaseClear">✕</span>
@@ -269,8 +279,8 @@ window.addEventListener("load", function() {
 
 <!-- SALE -->
 <div id="sale" class="page">
-  <div class="section-title">💰 Sale Records</div>
-  <div class="search-box">
+  <div class="section-title sticky-title">💰 Sale Records</div>
+  <div class="search-box sticky-search">
     <span>🔍</span>
     <input type="text" id="saleSearch" oninput="filterList('sale')" placeholder="Search by product / customer...">
     <span onclick="clearFilter('sale')" style="display:none;cursor:pointer;color:#6b8db0;" id="saleClear">✕</span>
@@ -280,8 +290,8 @@ window.addEventListener("load", function() {
 
 <!-- RETURNS -->
 <div id="returns" class="page">
-  <div class="section-title">↩️ Product Returns</div>
-  <div class="search-box">
+  <div class="section-title sticky-title">↩️ Product Returns</div>
+  <div class="search-box sticky-search">
     <span>🔍</span>
     <input type="text" id="returnSearch" oninput="filterList('returns')" placeholder="Search by product / party...">
     <span onclick="clearFilter('returns')" style="display:none;cursor:pointer;color:#6b8db0;" id="returnsClear">✕</span>
@@ -291,8 +301,8 @@ window.addEventListener("load", function() {
 
 <!-- PRODUCTS -->
 <div id="products" class="page">
-  <div class="section-title">📦 Product Master</div>
-  <div class="search-box">
+  <div class="section-title sticky-title">📦 Product Master</div>
+  <div class="search-box sticky-search">
     <span>🔍</span>
     <input type="text" id="productSearch" oninput="filterList('products')" placeholder="Search product...">
     <span onclick="clearFilter('products')" style="display:none;cursor:pointer;color:#6b8db0;" id="productsClear">✕</span>
@@ -854,9 +864,9 @@ function startRealtime() {
     });
   });
 
-  // Sales (mobile_transactions)
-  db.collection('mobile_transactions').onSnapshot(snap => {
-    sales = snap.docs.map(doc => {
+  // Sales — check mobile_transactions, transactions, and sales collections
+  function processSaleDocs(docs, type) {
+    return docs.map(doc => {
       const d = doc.data();
       return { _id: doc.id, ...d,
         productName: d.productName || d.product || '',
@@ -866,17 +876,38 @@ function startRealtime() {
         amount: Number(d.amount || d.total) || 0,
         unit: d.unit || 'PCS',
         date: d.date || '',
+        _src: type,
       };
-    }).filter(s => !s.type || s.type === 'sale');
+    }).filter(s => !s.type || s.type === 'sale' || s.type === 'Sale');
+  }
+
+  let _salesMobile = [], _salesTxn = [], _salesCol = [];
+  function mergeSales() {
+    // Merge all, deduplicate by _id
+    const seen = new Set();
+    sales = [];
+    [..._salesMobile, ..._salesTxn, ..._salesCol].forEach(s => {
+      if (!seen.has(s._id)) { seen.add(s._id); sales.push(s); }
+    });
     if (activeTabIndex === 2) renderSale();
     if (activeTabIndex === 5) renderReports();
     renderDashboardStats();
-  }, () => {
-    db.collection('mobile_transactions').get().then(snap => {
-      sales = snap.docs.map(doc=>{const d=doc.data();return{_id:doc.id,...d,productName:d.productName||d.product||'',party:d.party||d.customerName||'',qty:Number(d.qty)||0,rate:Number(d.rate)||0,amount:Number(d.amount||d.total)||0,unit:d.unit||'PCS',date:d.date||''};}).filter(s=>!s.type||s.type==='sale');
-      if(activeTabIndex===2) renderSale();
-    });
-  });
+  }
+
+  db.collection('mobile_transactions').onSnapshot(snap => {
+    _salesMobile = processSaleDocs(snap.docs, 'mobile_transactions');
+    mergeSales();
+  }, () => { _salesMobile = []; mergeSales(); });
+
+  db.collection('transactions').onSnapshot(snap => {
+    _salesTxn = processSaleDocs(snap.docs, 'transactions');
+    mergeSales();
+  }, () => { _salesTxn = []; mergeSales(); });
+
+  db.collection('sales').onSnapshot(snap => {
+    _salesCol = processSaleDocs(snap.docs, 'sales');
+    mergeSales();
+  }, () => { _salesCol = []; mergeSales(); });
 
   // Product Returns
   db.collection('productreturn').onSnapshot(snap => {
@@ -915,28 +946,64 @@ function updateTopbarDate() {
   if(el2) el2.textContent = dayName;
 }
 
-// ── Greeting Bar Update ──
+// ── Greeting Bar Update (Live Sky Feel) ──
 function updateGreeting() {
   var now = new Date();
   var h = now.getHours();
+  var m = now.getMinutes();
   var greetText, greetSub, icon;
+  var timeDecimal = h + m/60;
 
-  if(h >= 5 && h < 12) {
+  if (timeDecimal >= 5 && timeDecimal < 6) {
+    // Sunrise: 🌅 Sunrise
+    greetText = 'Good Morning! 🌅';
+    greetSub  = 'Sunrise! A fresh start to your day.';
+    icon      = '🌅';
+  } else if (timeDecimal >= 6 && timeDecimal < 8) {
+    // Early morning: 🌤️ Sun Behind Small Cloud
+    greetText = 'Good Morning! 🌤️';
+    greetSub  = 'Early morning! Your inventory awaits.';
+    icon      = '🌤️';
+  } else if (timeDecimal >= 8 && timeDecimal < 12) {
+    // Morning sunshine: ☀️ Sun
     greetText = 'Good Morning! ☀️';
     greetSub  = 'Good morning! Here\'s your inventory overview.';
     icon      = '☀️';
-  } else if(h >= 12 && h < 16) {
-    greetText = 'Good Afternoon! 🌤️';
+  } else if (timeDecimal >= 12 && timeDecimal < 13) {
+    // Noon blazing: 🌞 Sun With Face
+    greetText = 'Good Afternoon! 🌞';
+    greetSub  = 'Noon hustle! Here\'s your inventory overview.';
+    icon      = '🌞';
+  } else if (timeDecimal >= 13 && timeDecimal < 15) {
+    // Afternoon partly cloudy: ⛅ Sun Behind Cloud
+    greetText = 'Good Afternoon! ⛅';
     greetSub  = 'Good afternoon! Here\'s your inventory overview.';
+    icon      = '⛅';
+  } else if (timeDecimal >= 15 && timeDecimal < 17) {
+    // Late afternoon: 🌤️ Sun Behind Small Cloud
+    greetText = 'Good Afternoon! 🌤️';
+    greetSub  = 'Keep going! Here\'s your inventory overview.';
     icon      = '🌤️';
-  } else if(h >= 16 && h < 20) {
+  } else if (timeDecimal >= 17 && timeDecimal < 18.5) {
+    // Sunset golden hour: 🌇 Sunset
     greetText = 'Good Evening! 🌇';
+    greetSub  = 'Golden hour! Here\'s your inventory overview.';
+    icon      = '🌇';
+  } else if (timeDecimal >= 18.5 && timeDecimal < 20) {
+    // Evening city dusk: 🌆 Cityscape At Dusk
+    greetText = 'Good Evening! 🌆';
     greetSub  = 'Good evening! Here\'s your inventory overview.';
-    icon      = '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(251,146,60,0.18);border:2px solid rgba(251,146,60,0.45);">🌇</span>';
+    icon      = '🌆';
+  } else if (timeDecimal >= 20 && timeDecimal < 22) {
+    // Night with stars: 🌃 Night With Stars
+    greetText = 'Good Night! 🌃';
+    greetSub  = 'Winding down! Here\'s your inventory overview.';
+    icon      = '🌃';
   } else {
-    greetText = 'Good Night! 🌙';
-    greetSub  = 'Good night! Here\'s your inventory overview.';
-    icon      = '🌙';
+    // Late night bridge: 🌉 Bridge At Night
+    greetText = 'Good Night! 🌉';
+    greetSub  = 'Late night! Here\'s your inventory overview.';
+    icon      = '🌉';
   }
 
   var gt = document.getElementById('greetingText');
@@ -944,26 +1011,62 @@ function updateGreeting() {
   var gi = document.getElementById('greetingIcon');
   if(gt) gt.textContent = greetText;
   if(gs) gs.textContent = greetSub;
-  if(gi) gi.innerHTML = icon;
+  if(gi) gi.textContent = icon;
 }
 
-// ── Fetch Current Temperature ──
+// ── Fetch Temperature (with fallback to IP-based location) ──
 function fetchTemperature() {
-  if(!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(function(pos) {
-    var lat = pos.coords.latitude.toFixed(4);
-    var lon = pos.coords.longitude.toFixed(4);
+  function showTemp(lat, lon) {
     fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true')
       .then(function(r){ return r.json(); })
       .then(function(data) {
         if(data && data.current_weather) {
           var temp = Math.round(data.current_weather.temperature);
-          var el = document.getElementById('greetingTemp');
-          if(el) el.textContent = temp + '°C';
+          var wcode = data.current_weather.weathercode;
+          var weatherIcon = '🌡️';
+          if (wcode === 0) weatherIcon = '☀️';
+          else if (wcode <= 2) weatherIcon = '⛅';
+          else if (wcode === 3) weatherIcon = '☁️';
+          else if (wcode <= 57) weatherIcon = '🌧️';
+          else if (wcode <= 77) weatherIcon = '❄️';
+          else if (wcode <= 82) weatherIcon = '🌧️';
+          else if (wcode <= 99) weatherIcon = '⛈️';
+          var tEl = document.getElementById('tempDisplay');
+          if(tEl) {
+            tEl.textContent = weatherIcon + ' ' + temp + '°C';
+            tEl.style.display = 'block';
+          }
         }
       })
       .catch(function(){});
-  }, function(){}, {timeout:8000});
+  }
+
+  // Try GPS first
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        showTemp(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4));
+      },
+      function() {
+        // Fallback: IP-based location
+        fetch('https://ipapi.co/json/')
+          .then(function(r){ return r.json(); })
+          .then(function(d) {
+            if(d && d.latitude && d.longitude) showTemp(d.latitude, d.longitude);
+          })
+          .catch(function(){});
+      },
+      {timeout:5000}
+    );
+  } else {
+    // No geolocation API at all: use IP
+    fetch('https://ipapi.co/json/')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if(d && d.latitude && d.longitude) showTemp(d.latitude, d.longitude);
+      })
+      .catch(function(){});
+  }
 }
 
 // ── Init date/greeting on load ──
