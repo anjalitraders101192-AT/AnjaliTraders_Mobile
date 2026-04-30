@@ -682,9 +682,30 @@ function renderReports() {
 
 // ── Dashboard Today Sales ──
 function renderDashboardStats() {
-  const today = new Date().toISOString().split('T')[0];
-  const todayS = sales.filter(s => fmtDate(s.date) === today).reduce((s,t)=>s+Number(t.amount||t.total||0),0);
-  document.getElementById('todaySales').innerHTML = `₹${todayS.toLocaleString('en-IN')}`;
+  var now = new Date();
+  var todayDD = String(now.getDate()).padStart(2,'0');
+  var todayMM = String(now.getMonth()+1).padStart(2,'0');
+  var todayYY = String(now.getFullYear());
+  var todayISO  = todayYY+'-'+todayMM+'-'+todayDD;   // 2026-04-30
+  var todayDDMM = todayDD+'/'+todayMM+'/'+todayYY;   // 30/04/2026
+
+  function isTodaySale(s) {
+    var d = s.date || '';
+    if (!d) return false;
+    // ISO format: 2026-04-30
+    if (d === todayISO) return true;
+    // dd/mm/yyyy: 30/04/2026
+    if (d === todayDDMM) return true;
+    // Firestore Timestamp object
+    if (d && typeof d === 'object' && d.toDate) {
+      var td = d.toDate();
+      return td.getDate()===now.getDate() && td.getMonth()===now.getMonth() && td.getFullYear()===now.getFullYear();
+    }
+    return false;
+  }
+
+  var todayS = sales.filter(isTodaySale).reduce(function(s,t){ return s+Number(t.amount||t.total||0); }, 0);
+  document.getElementById('todaySales').innerHTML = '₹'+todayS.toLocaleString('en-IN');
 }
 
 // ── MODALS ──
@@ -1014,59 +1035,103 @@ function updateGreeting() {
   if(gi) gi.textContent = icon;
 }
 
-// ── Fetch Temperature (with fallback to IP-based location) ──
-function fetchTemperature() {
-  function showTemp(lat, lon) {
-    fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true')
-      .then(function(r){ return r.json(); })
-      .then(function(data) {
-        if(data && data.current_weather) {
-          var temp = Math.round(data.current_weather.temperature);
-          var wcode = data.current_weather.weathercode;
-          var weatherIcon = '🌡️';
-          if (wcode === 0) weatherIcon = '☀️';
-          else if (wcode <= 2) weatherIcon = '⛅';
-          else if (wcode === 3) weatherIcon = '☁️';
-          else if (wcode <= 57) weatherIcon = '🌧️';
-          else if (wcode <= 77) weatherIcon = '❄️';
-          else if (wcode <= 82) weatherIcon = '🌧️';
-          else if (wcode <= 99) weatherIcon = '⛈️';
-          var tEl = document.getElementById('tempDisplay');
-          if(tEl) {
-            tEl.textContent = weatherIcon + ' ' + temp + '°C';
-            tEl.style.display = 'block';
-          }
-        }
-      })
-      .catch(function(){});
-  }
+// ── Weather Config for Balaghat ──
+var BALAGHAT_LAT = 21.8303;
+var BALAGHAT_LON = 80.1921;
 
-  // Try GPS first
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function(pos) {
-        showTemp(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4));
-      },
-      function() {
-        // Fallback: IP-based location
-        fetch('https://ipapi.co/json/')
-          .then(function(r){ return r.json(); })
-          .then(function(d) {
-            if(d && d.latitude && d.longitude) showTemp(d.latitude, d.longitude);
-          })
-          .catch(function(){});
-      },
-      {timeout:5000}
-    );
+// WMO weather code → { icon, label, bgGradient, textColor }
+function getWeatherTheme(wcode, isNight) {
+  if (wcode === 0) {
+    // Clear sky
+    if (isNight) return { icon:'🌙', label:'Clear Night', bg:'linear-gradient(135deg,#0a0f2e 0%,#1a1a4e 60%,#2d1b69 100%)', accent:'#a78bfa' };
+    return { icon:'☀️', label:'Clear Sky', bg:'linear-gradient(135deg,#f97316 0%,#fb923c 40%,#fde68a 100%)', accent:'#fff' };
+  } else if (wcode <= 2) {
+    // Partly cloudy
+    if (isNight) return { icon:'🌛', label:'Partly Cloudy', bg:'linear-gradient(135deg,#1e2a4a 0%,#2d3f6e 60%,#374151 100%)', accent:'#93c5fd' };
+    return { icon:'⛅', label:'Partly Cloudy', bg:'linear-gradient(135deg,#0369a1 0%,#0ea5e9 50%,#7dd3fc 100%)', accent:'#fff' };
+  } else if (wcode === 3) {
+    // Overcast
+    if (isNight) return { icon:'☁️', label:'Overcast', bg:'linear-gradient(135deg,#1f2937 0%,#374151 60%,#4b5563 100%)', accent:'#d1d5db' };
+    return { icon:'☁️', label:'Overcast', bg:'linear-gradient(135deg,#374151 0%,#6b7280 50%,#9ca3af 100%)', accent:'#fff' };
+  } else if (wcode <= 48) {
+    // Fog / mist
+    return { icon:'🌫️', label:'Foggy', bg:'linear-gradient(135deg,#4b5563 0%,#6b7280 50%,#9ca3af 100%)', accent:'#e5e7eb' };
+  } else if (wcode <= 57) {
+    // Drizzle
+    return { icon:'🌦️', label:'Drizzle', bg:'linear-gradient(135deg,#1e3a5f 0%,#1e40af 50%,#3b82f6 100%)', accent:'#bfdbfe' };
+  } else if (wcode <= 67) {
+    // Rain
+    return { icon:'🌧️', label:'Rainy', bg:'linear-gradient(135deg,#1e3a5f 0%,#1d4ed8 50%,#2563eb 100%)', accent:'#93c5fd' };
+  } else if (wcode <= 77) {
+    // Snow
+    return { icon:'❄️', label:'Snowy', bg:'linear-gradient(135deg,#e0f2fe 0%,#bae6fd 50%,#7dd3fc 100%)', accent:'#0369a1' };
+  } else if (wcode <= 82) {
+    // Showers
+    return { icon:'🌩️', label:'Heavy Rain', bg:'linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1d4ed8 100%)', accent:'#60a5fa' };
   } else {
-    // No geolocation API at all: use IP
-    fetch('https://ipapi.co/json/')
-      .then(function(r){ return r.json(); })
-      .then(function(d) {
-        if(d && d.latitude && d.longitude) showTemp(d.latitude, d.longitude);
-      })
-      .catch(function(){});
+    // Thunderstorm
+    return { icon:'⛈️', label:'Thunderstorm', bg:'linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%)', accent:'#f59e0b' };
   }
+}
+
+// ── Fetch Live Weather for Balaghat ──
+function fetchTemperature() {
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+BALAGHAT_LAT+'&longitude='+BALAGHAT_LON+'&current_weather=true&hourly=relativehumidity_2m&timezone=Asia%2FKolkata&forecast_days=1')
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (!data || !data.current_weather) return;
+
+      var temp   = Math.round(data.current_weather.temperature);
+      var wcode  = data.current_weather.weathercode;
+      var isDay  = data.current_weather.is_day === 1;
+      var windKmh = Math.round(data.current_weather.windspeed || 0);
+
+      // Get humidity for current hour
+      var humid = '';
+      try {
+        var nowH = new Date().getHours();
+        humid = (data.hourly && data.hourly.relativehumidity_2m)
+          ? data.hourly.relativehumidity_2m[nowH] + '%'
+          : '';
+      } catch(e) { humid = ''; }
+
+      var theme = getWeatherTheme(wcode, !isDay);
+
+      // Update greeting bar background
+      var bar = document.getElementById('greetingBar');
+      if (bar) {
+        bar.style.background  = theme.bg;
+        bar.style.borderColor = 'rgba(255,255,255,0.15)';
+        bar.style.boxShadow   = '0 4px 20px rgba(0,0,0,0.25)';
+      }
+
+      // Update greeting icon to weather icon
+      var gi = document.getElementById('greetingIcon');
+      if (gi) gi.textContent = theme.icon;
+
+      // Update greeting text color
+      var gt = document.getElementById('greetingText');
+      var gs = document.getElementById('greetingSub');
+      if (gt) gt.style.color = '#ffffff';
+      if (gs) gs.style.color = 'rgba(255,255,255,0.8)';
+
+      // Show weather info
+      var tEl = document.getElementById('tempDisplay');
+      if (tEl) {
+        var info = theme.icon + ' ' + temp + '°C  |  ' + theme.label;
+        if (windKmh) info += '  |  💨 ' + windKmh + ' km/h';
+        if (humid)   info += '  |  💧 ' + humid;
+        info += '  •  Balaghat';
+        tEl.textContent    = info;
+        tEl.style.display  = 'block';
+        tEl.style.color    = theme.accent;
+        tEl.style.fontSize = '11px';
+        tEl.style.fontWeight = '600';
+        tEl.style.marginTop  = '6px';
+        tEl.style.letterSpacing = '0.3px';
+      }
+    })
+    .catch(function(){ /* silently fail */ });
 }
 
 // ── Init date/greeting on load ──
@@ -1074,11 +1139,15 @@ function fetchTemperature() {
   updateTopbarDate();
   updateGreeting();
   fetchTemperature();
-  // Update every minute
+  // Update clock every minute
   setInterval(function(){
     updateTopbarDate();
     updateGreeting();
   }, 60000);
+  // Refresh weather every 15 minutes
+  setInterval(function(){
+    fetchTemperature();
+  }, 15 * 60 * 1000);
 })();
 
 // ── Auth & Start ──
