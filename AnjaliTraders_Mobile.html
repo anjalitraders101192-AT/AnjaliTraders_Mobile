@@ -232,63 +232,69 @@ window.addEventListener("load", function() {
     position:sticky;top:120px;z-index:50;
     border-radius:20px;padding:14px 14px 12px 16px;
     margin-bottom:16px;overflow:hidden;color:#fff;
-    background:linear-gradient(135deg,#74c0fc 0%,#a9d8f5 50%,#ffd43b 100%);
+    background:linear-gradient(160deg,#1e90cc 0%,#56c0f0 40%,#a8dff5 80%,#ffd700 100%);
     box-shadow:0 6px 22px rgba(0,0,0,0.22);
-    transition:background 1.2s ease,box-shadow 0.3s;
+    transition:background 1.4s ease;
   }
-  /* Left accent strip */
-  #wbLglow{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:20px 0 0 20px;background:rgba(255,255,255,0.7);}
-  /* Scene layer — full bar background */
+  #wbLglow{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:20px 0 0 20px;background:rgba(255,255,255,0.8);}
   #wbScene{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:20px;}
-  /* Content above scene */
   #wbContent{position:relative;z-index:2;}
-  /* Row 1 */
-  .wb-row1{display:flex;justify-content:space-between;align-items:flex-start;}
-  #wb-greeting{font-size:18px;font-weight:800;font-family:'Orbitron',sans-serif;text-shadow:0 1px 4px rgba(0,0,0,0.25);}
-  #wb-sub{font-size:11px;color:rgba(255,255,255,0.88);margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,0.2);}
-  .wb-timebox{background:rgba(0,0,0,0.18);backdrop-filter:blur(8px);border-radius:10px;padding:5px 9px;text-align:right;border:1px solid rgba(255,255,255,0.25);}
-  #wb-time{font-size:14px;font-weight:700;font-family:'Orbitron',sans-serif;display:block;}
-  #wb-date{font-size:9px;opacity:0.85;display:block;}
+  /* Row1: greeting left, timebox stacked below greeting */
+  .wb-chips{display:flex;align-items:center;flex-wrap:nowrap;gap:6px;overflow-x:auto;scrollbar-width:none;}
+  #wb-greeting{font-size:19px;font-weight:900;font-family:'Orbitron',sans-serif;
+    color:#fff;text-shadow:0 0 12px rgba(255,255,200,0.9),0 2px 6px rgba(0,0,0,0.4);
+    letter-spacing:0.5px;}
+  #wb-sub{font-size:11px;color:rgba(255,255,255,0.92);margin-top:1px;text-shadow:0 1px 4px rgba(0,0,0,0.3);}
+  .wb-timebox{background:rgba(0,0,0,0.22);backdrop-filter:blur(10px);border-radius:10px;
+    padding:5px 10px;text-align:right;border:1px solid rgba(255,255,255,0.28);align-self:flex-start;}
+  #wb-time{font-size:15px;font-weight:700;font-family:'Orbitron',sans-serif;display:block;
+    color:#ffe066;text-shadow:0 0 8px rgba(255,220,50,0.8);}
+  #wb-date{display:none;}
   /* Shimmer divider */
-  .wb-divider{position:relative;height:2px;margin:10px 0 9px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,0.2);}
-  .wb-divider::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.95),transparent);animation:wbShimmer 2s linear infinite;}
+  .wb-divider{position:relative;height:2px;margin:9px 0 8px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,0.18);}
+  .wb-divider::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(180,80,255,1),transparent);animation:wbShimmer 2s linear infinite;}
   @keyframes wbShimmer{0%{left:-40%}100%{left:140%}}
-  /* Chips row */
-  .wb-chips{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;scrollbar-width:none;}
+  /* Chips */
+  .wb-chips{display:flex;align-items:center;flex-wrap:nowrap;gap:6px;overflow-x:auto;scrollbar-width:none;}
   .wb-chips::-webkit-scrollbar{display:none;}
-  .wb-chip{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.22);backdrop-filter:blur(6px);padding:5px 9px;border-radius:10px;border:1px solid rgba(255,255,255,0.3);flex-shrink:0;}
-  .wb-chip .chip-val{font-size:12px;font-weight:700;font-family:'Orbitron',sans-serif;display:block;white-space:nowrap;}
-  .wb-chip .chip-lbl{font-size:9px;opacity:0.8;display:block;}
-  /* Scene animations */
-  @keyframes wbSunPulse{0%,100%{box-shadow:0 0 22px 8px rgba(255,220,50,0.55);}50%{box-shadow:0 0 40px 18px rgba(255,170,10,0.75);}}
-  @keyframes wbCloudDrift{0%{transform:translateX(0);}50%{transform:translateX(10px);}100%{transform:translateX(0);}}
-  @keyframes wbRainFall{0%{transform:translateY(-30px);opacity:0;}80%{opacity:1;}100%{transform:translateY(110px);opacity:0;}}
+  .wb-chip{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,0.18);
+    backdrop-filter:blur(8px);padding:5px 9px;border-radius:10px;
+    border:1px solid rgba(255,255,255,0.25);flex-shrink:0;}
+  .wb-chip .chip-val{font-size:12px;font-weight:700;font-family:'Orbitron',sans-serif;
+    display:block;white-space:nowrap;color:#fff;text-shadow:0 0 6px rgba(255,255,255,0.5);}
+  .wb-chip .chip-lbl{font-size:9px;opacity:0.78;display:block;color:#d0eeff;}
+  /* Animations */
+  @keyframes wbSunPulse{0%,100%{box-shadow:0 0 22px 8px rgba(255,220,50,0.6);}50%{box-shadow:0 0 44px 20px rgba(255,170,10,0.8);}}
+  @keyframes wbCloudDrift{0%,100%{transform:translateX(0);}50%{transform:translateX(10px);}}
+  @keyframes wbRainFall{0%{transform:translateY(-30px);opacity:0;}80%{opacity:1;}100%{transform:translateY(120px);opacity:0;}}
   @keyframes wbMoonGlow{0%,100%{box-shadow:0 0 14px 4px rgba(200,220,255,0.45);}50%{box-shadow:0 0 28px 12px rgba(180,210,255,0.65);}}
-  @keyframes wbStarBlink{0%,100%{opacity:1;}50%{opacity:0.15;}}
-  @keyframes wbBirdMove{0%{transform:translateX(0) translateY(0);}33%{transform:translateX(-8px) translateY(-4px);}66%{transform:translateX(-16px) translateY(0);}100%{transform:translateX(-24px) translateY(-3px);}}
-  @keyframes wbLightning{0%,90%,100%{opacity:0;}92%,96%{opacity:1;}94%,98%{opacity:0.3;}}
+  @keyframes wbStarBlink{0%,100%{opacity:1;}50%{opacity:0.1;}}
+  @keyframes wbBirdMove{0%{transform:translate(0,0);}50%{transform:translate(-12px,-5px);}100%{transform:translate(-24px,-2px);}}
+  @keyframes wbLightning{0%,88%,100%{opacity:0;}90%,95%{opacity:1;}92%,97%{opacity:0.2;}}
   </style>
 
   <div id="weatherBar">
     <div id="wbLglow"></div>
     <div id="wbScene"></div>
     <div id="wbContent">
-      <div class="wb-row1">
-        <div>
-          <div id="wb-greeting">Good Day! ☀️</div>
-          <div id="wb-sub">Here's your inventory overview.</div>
-        </div>
-        <div class="wb-timebox">
-          <span id="wb-time">--:--</span>
-          <span id="wb-date">-- --- --</span>
-        </div>
+      <!-- Row 1: Greeting + Icon -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+        <div id="wb-greeting" style="font-size:18px;font-weight:900;font-family:'Orbitron',sans-serif;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,0.45);letter-spacing:0.5px;">Good Day!</div>
+        <span id="wbGreetIcon" style="line-height:1;flex-shrink:0;"></span>
       </div>
+      <div id="wb-sub" style="font-size:11px;color:rgba(255,255,230,0.92);margin-bottom:10px;text-shadow:0 1px 6px rgba(0,0,0,0.35);font-weight:500;">Here's your inventory overview.</div>
       <div class="wb-divider"></div>
+      <!-- Row 2: Chips + Clock at end -->
       <div class="wb-chips">
         <div class="wb-chip" id="wbc-temp" style="display:none"><span>🌡️</span><div><span class="chip-val" id="wbv-temp">--</span><span class="chip-lbl">Temp</span></div></div>
         <div class="wb-chip" id="wbc-wind" style="display:none"><span>💨</span><div><span class="chip-val" id="wbv-wind">--</span><span class="chip-lbl">Wind</span></div></div>
         <div class="wb-chip" id="wbc-hum" style="display:none"><span>💧</span><div><span class="chip-val" id="wbv-hum">--</span><span class="chip-lbl">Humidity</span></div></div>
         <div class="wb-chip" id="wbc-loc" style="display:none"><span>📍</span><div><span class="chip-val" id="wbv-loc" style="font-size:10px;white-space:nowrap;">--</span><span class="chip-lbl">Location</span></div></div>
+        <!-- Clock chip at end -->
+        <div style="margin-left:auto;flex-shrink:0;background:rgba(0,0,0,0.25);backdrop-filter:blur(10px);border-radius:10px;padding:6px 11px;border:1px solid rgba(255,255,255,0.25);">
+          <span id="wb-time" style="font-size:15px;font-weight:700;font-family:'Orbitron',sans-serif;color:#7DF9FF;text-shadow:0 0 10px rgba(125,249,255,0.6);letter-spacing:1px;">--:--</span>
+        </div>
       </div>
     </div>
   </div>
@@ -306,8 +312,8 @@ window.addEventListener("load", function() {
       <div class="stat-value" style="color:#e11d48;" id="outStockCount">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Today's Sales</div>
-      <div class="stat-value" style="color:#059669;" id="todaySales">₹0</div>
+      <div class="stat-label">Today's Sales (QTY)</div>
+      <div class="stat-value" style="color:#059669;" id="todaySales">0</div>
     </div>
   </div>
   <div class="section-title">🔍 Product Search</div>
@@ -370,30 +376,29 @@ window.addEventListener("load", function() {
   <div class="section-title">📊 Business Summary</div>
   <div class="stat-card" style="margin-bottom:12px;">
     <div class="stat-label">Total Sales</div>
-    <div class="stat-value" style="color:#059669;" id="totalSalesAmt">₹0</div>
+    <div class="stat-value" style="color:#059669;" id="totalSalesAmt">0</div>
   </div>
   <div class="stat-card" style="margin-bottom:12px;">
     <div class="stat-label">Total Purchases</div>
-    <div class="stat-value" style="color:#0ea5e9;" id="totalPurchaseAmt">₹0</div>
+    <div class="stat-value" style="color:#0ea5e9;" id="totalPurchaseAmt">0</div>
   </div>
   <div class="stat-card" style="margin-bottom:12px;">
     <div class="stat-label">Total Returns</div>
-    <div class="stat-value" style="color:#d97706;" id="totalReturnAmt">₹0</div>
+    <div class="stat-value" style="color:#d97706;" id="totalReturnAmt">0</div>
   </div>
   <div class="stat-card">
     <div class="stat-label">Profit / Loss</div>
-    <div class="stat-value" id="profitLoss">₹0</div>
+    <div class="stat-value" id="profitLoss">0</div>
   </div>
   <div class="section-title" style="margin-top:20px;">📦 Stock Value</div>
   <div class="stat-card">
     <div class="stat-label">Total Inventory Value</div>
-    <div class="stat-value" style="color:#0ea5e9;" id="stockValue">₹0</div>
+    <div class="stat-value" style="color:#0ea5e9;" id="stockValue">0</div>
   </div>
 </div>
 
 <div id="toast" class="toast"></div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -653,7 +658,7 @@ function renderPurchase() {
         <div class="card-meta">${escapeHtml(p.party||p.firmName||p.vendorName||'-')} • ${fmtDate(p.date)}</div>
       </div>
       <div class="card-right">
-        <div class="card-amount" style="color:#0ea5e9;">₹${Number(p.amount||p.total||p.base||0).toLocaleString('en-IN')}</div>
+        <div class="card-amount" style="color:#0ea5e9;">${Number(p.amount||p.total||p.base||0).toLocaleString('en-IN')}</div>
         <div class="card-meta">Qty: ${p.qty||0} ${p.unit||''}</div>
       </div>
     </div>`).join('');
@@ -673,7 +678,7 @@ function renderSale() {
         <div class="card-meta">${escapeHtml(s.party||s.customerName||'-')} • ${fmtDate(s.date)}</div>
       </div>
       <div class="card-right">
-        <div class="card-amount" style="color:#059669;">₹${Number(s.amount||s.total||0).toLocaleString('en-IN')}</div>
+        <div class="card-amount" style="color:#059669;">${Number(s.amount||s.total||0).toLocaleString('en-IN')}</div>
         <div class="card-meta">Qty: ${s.qty||0} ${s.unit||''}</div>
       </div>
     </div>`).join('');
@@ -693,7 +698,7 @@ function renderReturns() {
         <div class="card-meta">${escapeHtml(r.party||r.vendorName||r.customerName||'-')} • ${fmtDate(r.date)}</div>
       </div>
       <div class="card-right">
-        <div class="card-amount" style="color:#d97706;">₹${Number(r.amount||r.total||0).toLocaleString('en-IN')}</div>
+        <div class="card-amount" style="color:#d97706;">${Number(r.amount||r.total||0).toLocaleString('en-IN')}</div>
         <div class="card-meta">Qty: ${r.qty||0} ${r.unit||''}</div>
       </div>
     </div>`).join('');
@@ -726,12 +731,12 @@ function renderReports() {
   const totalR = returns.reduce((s,t)=>s+Number(t.amount||t.total||0),0);
   const profit = totalS - totalP + totalR;
   const stockVal = products.reduce((s,p)=>s+(p.stock*(p.buyPrice||0)),0);
-  document.getElementById('totalSalesAmt').innerHTML = `₹${totalS.toLocaleString('en-IN')}`;
-  document.getElementById('totalPurchaseAmt').innerHTML = `₹${totalP.toLocaleString('en-IN')}`;
-  document.getElementById('totalReturnAmt').innerHTML = `₹${totalR.toLocaleString('en-IN')}`;
-  document.getElementById('stockValue').innerHTML = `₹${stockVal.toLocaleString('en-IN')}`;
+  document.getElementById('totalSalesAmt').innerHTML = `${totalS.toLocaleString('en-IN')}`;
+  document.getElementById('totalPurchaseAmt').innerHTML = `${totalP.toLocaleString('en-IN')}`;
+  document.getElementById('totalReturnAmt').innerHTML = `${totalR.toLocaleString('en-IN')}`;
+  document.getElementById('stockValue').innerHTML = `${stockVal.toLocaleString('en-IN')}`;
   const el = document.getElementById('profitLoss');
-  el.innerHTML = `₹${profit.toLocaleString('en-IN')}`;
+  el.innerHTML = `${profit.toLocaleString('en-IN')}`;
   el.style.color = profit >= 0 ? '#059669' : '#e11d48';
 }
 
@@ -739,7 +744,7 @@ function renderReports() {
 function renderDashboardStats() {
   const today = new Date().toISOString().split('T')[0];
   const todayS = sales.filter(s => fmtDate(s.date) === today).reduce((s,t)=>s+Number(t.amount||t.total||0),0);
-  document.getElementById('todaySales').innerHTML = `₹${todayS.toLocaleString('en-IN')}`;
+  var todayDate=new Date().toISOString().slice(0,10); var todayQty=sales.filter(function(s){return s.date&&s.date.startsWith(todayDate);}).reduce(function(a,s){return a+Number(s.qty||0);},0); document.getElementById('todaySales').textContent=todayQty;
 }
 
 // ── MODALS ──
@@ -777,8 +782,8 @@ function showPurchaseModal(id) {
     ['Product', escapeHtml(p.productName||p.product)],
     ['Vendor / Firm', escapeHtml(p.party||p.firmName||p.vendorName)],
     ['Quantity', `${p.qty||0} ${p.unit||''}`],
-    ['Rate', `₹${Number(p.rate||p.billPrice||p.listPrice||0).toLocaleString('en-IN')}`],
-    ['Amount', `₹${amt.toLocaleString('en-IN')}`, '#0ea5e9'],
+    ['Rate', `${Number(p.rate||p.billPrice||p.listPrice||0).toLocaleString('en-IN')}`],
+    ['Amount', `${amt.toLocaleString('en-IN')}`, '#0ea5e9'],
     ['Date', fmtDate(p.date)],
     ['Bill No', escapeHtml(p.billNo||p.bill_no||p.challan||'')],
     ['Remark', escapeHtml(p.remark||p.note||'')],
@@ -787,7 +792,7 @@ function showPurchaseModal(id) {
     'linear-gradient(135deg,#0a1e40,#0d2a5e)', '🛒', 'PURCHASE DETAILS',
     `<div style="text-align:center;margin-bottom:16px;">
       <div style="font-size:36px;">🛒</div>
-      <div style="font-size:28px;font-weight:800;color:#0ea5e9;">₹${amt.toLocaleString('en-IN')}</div>
+      <div style="font-size:28px;font-weight:800;color:#0ea5e9;">${amt.toLocaleString('en-IN')}</div>
     </div>
     <div style="background:#f4f7fb;border-radius:16px;padding:14px;">${rows}</div>`
   );
@@ -801,8 +806,8 @@ function showSaleModal(id) {
     ['Product', escapeHtml(s.productName||s.product)],
     ['Customer', escapeHtml(s.party||s.customerName)],
     ['Quantity', `${s.qty||0} ${s.unit||''}`],
-    ['Rate', `₹${Number(s.rate||0).toLocaleString('en-IN')}`],
-    ['Amount', `₹${amt.toLocaleString('en-IN')}`, '#059669'],
+    ['Rate', `${Number(s.rate||0).toLocaleString('en-IN')}`],
+    ['Amount', `${amt.toLocaleString('en-IN')}`, '#059669'],
     ['Date', fmtDate(s.date)],
     ['Bill No', escapeHtml(s.billNo||s.bill_no||'')],
     ['Remark', escapeHtml(s.remark||s.note||'')],
@@ -811,7 +816,7 @@ function showSaleModal(id) {
     'linear-gradient(135deg,#059669,#10b981)', '💰', 'SALE DETAILS',
     `<div style="text-align:center;margin-bottom:16px;">
       <div style="font-size:36px;">💰</div>
-      <div style="font-size:28px;font-weight:800;color:#059669;">₹${amt.toLocaleString('en-IN')}</div>
+      <div style="font-size:28px;font-weight:800;color:#059669;">${amt.toLocaleString('en-IN')}</div>
     </div>
     <div style="background:#f4f7fb;border-radius:16px;padding:14px;">${rows}</div>`
   );
@@ -826,8 +831,8 @@ function showReturnModal(id) {
     ['Party', escapeHtml(r.party||r.vendorName||r.customerName)],
     ['Return Type', escapeHtml(r.returnType||r.type||'')],
     ['Quantity', `${r.qty||0} ${r.unit||''}`],
-    ['Rate', `₹${Number(r.rate||0).toLocaleString('en-IN')}`],
-    ['Amount', `₹${amt.toLocaleString('en-IN')}`, '#d97706'],
+    ['Rate', `${Number(r.rate||0).toLocaleString('en-IN')}`],
+    ['Amount', `${amt.toLocaleString('en-IN')}`, '#d97706'],
     ['Date', fmtDate(r.date)],
     ['Remark', escapeHtml(r.remark||r.note||'')],
   ]);
@@ -835,7 +840,7 @@ function showReturnModal(id) {
     'linear-gradient(135deg,#92400e,#d97706)', '↩️', 'RETURN DETAILS',
     `<div style="text-align:center;margin-bottom:16px;">
       <div style="font-size:36px;">↩️</div>
-      <div style="font-size:28px;font-weight:800;color:#d97706;">₹${amt.toLocaleString('en-IN')}</div>
+      <div style="font-size:28px;font-weight:800;color:#d97706;">${amt.toLocaleString('en-IN')}</div>
     </div>
     <div style="background:#f4f7fb;border-radius:16px;padding:14px;">${rows}</div>`
   );
@@ -852,9 +857,9 @@ function showProductModal(p) {
     ['Category', escapeHtml(p.category||'General')],
     ['Unit', escapeHtml(p.unit||'PCS')],
     ['Min Stock', String(p.minStock||5)],
-    ['Buy Price', `₹${Number(p.buyPrice||p.price||0).toLocaleString('en-IN')}`],
-    ['Sell Price', `₹${Number(p.sellPrice||0).toLocaleString('en-IN')}`],
-    ['Stock Value', `₹${(p.stock*(p.buyPrice||p.price||0)).toLocaleString('en-IN')}`, '#0ea5e9'],
+    ['Buy Price', `${Number(p.buyPrice||p.price||0).toLocaleString('en-IN')}`],
+    ['Sell Price', `${Number(p.sellPrice||0).toLocaleString('en-IN')}`],
+    ['Stock Value', `${(p.stock*(p.buyPrice||p.price||0)).toLocaleString('en-IN')}`, '#0ea5e9'],
   ]);
   modalBase(
     'linear-gradient(135deg,#0a1e40,#0d2a5e)', '📦', 'PRODUCT DETAILS',
@@ -1017,58 +1022,140 @@ function renderWbScene(hour,wCode){
   var bar=document.getElementById('weatherBar');
   if(!scene||!bar) return;
   scene.innerHTML='';
-  var isNight=(hour>=20||hour<5),isEvening=(hour>=17&&hour<20),isMorning=(hour>=5&&hour<9);
-  var isRainy=wCode&&wCode>60,isStormy=wCode&&wCode>=95;
-  var isCloudy=wCode&&wCode>=2&&wCode<=45&&!isRainy,isSnowy=wCode&&wCode>=70&&wCode<=77;
-  if(isNight) bar.style.background='linear-gradient(160deg,#0a0a1a,#0f1830,#1a2a4a)';
-  else if(isEvening) bar.style.background='linear-gradient(160deg,#1a1a6e,#6a3093,#c94b2e,#ff8c00)';
-  else if(isStormy) bar.style.background='linear-gradient(160deg,#1a1a1a,#2c3e50,#3d4f60)';
-  else if(isRainy) bar.style.background='linear-gradient(160deg,#1c2b3a,#2d4a6e,#4a6fa5)';
-  else if(isSnowy) bar.style.background='linear-gradient(160deg,#c8d8e8,#a0b8cc,#e8f0f8)';
-  else if(isCloudy) bar.style.background='linear-gradient(160deg,#5ba3d9,#87bfee,#b8d8f0)';
-  else if(isMorning) bar.style.background='linear-gradient(160deg,#ff9a3c,#ffcf6e,#fff5cc)';
-  else bar.style.background='linear-gradient(160deg,#1e90cc,#56c0f0,#a8dff5,#ffd700)';
-  function mk(css,txt){var d=document.createElement('div');d.style.cssText=css;if(txt)d.textContent=txt;return d;}
+
+  var isNight=(hour>=20||hour<5);
+  var isEvening=(hour>=17&&hour<20);
+  var isMorning=(hour>=5&&hour<9);
+  var isRainy=wCode>60&&wCode<=82;
+  var isStormy=wCode>=95;
+  var isCloudy=wCode>=2&&wCode<=45&&!isRainy&&!isStormy;
+  var isSnowy=wCode>=70&&wCode<=77;
+  var isClear=wCode===0||(wCode<=1&&!isNight);
+
+  // ── Background per weather ──
+  if(isNight)        bar.style.background='linear-gradient(160deg,#05071a 0%,#0f1830 60%,#1a2540 100%)';
+  else if(isStormy)  bar.style.background='linear-gradient(160deg,#1a1a1a 0%,#2c3340 50%,#3d4f60 100%)';
+  else if(isRainy)   bar.style.background='linear-gradient(160deg,#1c2b3a 0%,#2d4460 55%,#4a6a90 100%)';
+  else if(isSnowy)   bar.style.background='linear-gradient(160deg,#c0d0e0 0%,#d8e8f0 60%,#eef4f8 100%)';
+  else if(isCloudy)  bar.style.background='linear-gradient(160deg,#5ba3d9 0%,#7bbfee 50%,#a8d8f5 100%)';
+  else if(isMorning) bar.style.background='linear-gradient(160deg,#ff6a00 0%,#ffa040 40%,#ffd080 80%,#fff5cc 100%)';
+  else if(isEvening) bar.style.background='linear-gradient(160deg,#1a1a6e 0%,#6a3093 35%,#c94b2e 70%,#ff8c00 100%)';
+  else               bar.style.background='linear-gradient(160deg,#1e90cc 0%,#56c0f0 40%,#a8dff5 80%,#ffd700 100%)';
+
+  function d(css){ var el=document.createElement('div'); el.style.cssText=css; return el; }
+  function cls(className,css){ var el=document.createElement('div'); el.className=className; if(css) el.style.cssText=css; return el; }
+
+  // ── NIGHT: Moon + Stars ──
   if(isNight){
-    scene.appendChild(mk('position:absolute;right:12%;top:15%;width:38px;height:38px;background:radial-gradient(circle at 32% 32%,#eef4ff,#b0c8e8);border-radius:50%;box-shadow:0 0 18px 5px rgba(200,220,255,0.4);'));
-    [[88,10],[72,8],[60,20],[82,28],[65,5]].forEach(function(p){scene.appendChild(mk('position:absolute;right:'+p[0]+'%;top:'+p[1]+'%;width:3px;height:3px;background:#fff;border-radius:50%;'));});
-  } else {
-    if(!isRainy&&!isStormy&&!isSnowy){
-      var sunTop=isEvening?'20%':isMorning?'25%':'10%';
-      var sunSz=isCloudy?'42px':'52px';
-      scene.appendChild(mk('position:absolute;right:12%;top:'+sunTop+';width:'+sunSz+';height:'+sunSz+';background:radial-gradient(circle,#fff7a0,#ffe033,#ff9900);border-radius:50%;box-shadow:0 0 25px 10px rgba(255,210,50,0.55);'));
+    var moon=cls('wb-moon','right:12%;top:14%;width:36px;height:36px;animation:wbMoonGlow 3s ease-in-out infinite;');
+    scene.appendChild(moon);
+    // crescent shadow
+    var cr=d('position:absolute;right:14%;top:16%;width:28px;height:28px;border-radius:50%;background:rgba(5,7,26,0.5);transform:translate(6px,-4px);');
+    scene.appendChild(cr);
+    [[88,8],[72,6],[62,18],[80,24],[55,10],[76,32],[65,4],[85,18]].forEach(function(p,i){
+      var s=cls('wb-star','right:'+p[0]+'%;top:'+p[1]+'%;width:'+(i%3===0?3:2)+'px;height:'+(i%3===0?3:2)+'px;animation:wbStarBlink '+(1+i*0.25).toFixed(2)+'s '+(i*0.18).toFixed(2)+'s ease-in-out infinite;');
+      scene.appendChild(s);
+    });
+    return;
+  }
+
+  // ── SUN (all daytime non-stormy) ──
+  if(!isStormy){
+    var sunR=isCloudy?'32%':isEvening?'8%':'10%';
+    var sunT=isEvening?'18%':isMorning?'22%':'8%';
+    var sunSz=isCloudy?40:isEvening?44:50;
+    var sun=cls('wb-sun','right:'+sunR+';top:'+sunT+';width:'+sunSz+'px;height:'+sunSz+'px;animation:wbSunPulse 3s ease-in-out infinite;');
+    scene.appendChild(sun);
+  }
+
+  // ── CLOUDS: CSS pseudo-element style realistic puffs ──
+  if(isCloudy||isRainy||isStormy){
+    var alpha=isStormy?0.82:isRainy?0.88:0.93;
+    var cr=isStormy?'rgba(80,95,112,'+alpha+')':isRainy?'rgba(100,130,165,'+alpha+')':'rgba(240,248,255,'+alpha+')';
+    var sd=isStormy?'0 6px 20px rgba(0,0,0,0.4)':'0 6px 18px rgba(0,0,0,0.12)';
+
+    // Cloud 1 — big main
+    var c1=d('position:absolute;right:2%;top:6%;width:82px;height:34px;background:'+cr+';border-radius:50px;animation:wbCloud1 7s ease-in-out infinite;box-shadow:'+sd+';filter:blur(0.3px);');
+    var c1t=d('position:absolute;right:18px;top:-16px;width:40px;height:40px;background:'+cr+';border-radius:50%;box-shadow:'+sd+';');
+    var c1t2=d('position:absolute;right:44px;top:-10px;width:30px;height:30px;background:'+cr+';border-radius:50%;');
+    c1.appendChild(c1t); c1.appendChild(c1t2); scene.appendChild(c1);
+
+    // Cloud 2 — smaller, behind
+    var c2=d('position:absolute;right:42%;top:18%;width:60px;height:24px;background:'+cr+';border-radius:40px;opacity:0.78;animation:wbCloud2 9s 1.5s ease-in-out infinite;filter:blur(0.5px);');
+    var c2t=d('position:absolute;right:12px;top:-12px;width:28px;height:28px;background:'+cr+';border-radius:50%;');
+    c2.appendChild(c2t); scene.appendChild(c2);
+
+    // Cloud 3 — tiny, far left
+    var c3=d('position:absolute;right:68%;top:8%;width:44px;height:18px;background:'+cr+';border-radius:30px;opacity:0.6;animation:wbCloud3 11s 3s ease-in-out infinite;');
+    scene.appendChild(c3);
+  }
+
+  // ── RAIN: Realistic drops ──
+  if(isRainy||isStormy){
+    var cnt=isStormy?32:22;
+    for(var i=0;i<cnt;i++){
+      var ht=isStormy?20:15;
+      var drop=cls('wb-raindrop','left:'+(Math.random()*108-4)+'%;top:0;height:'+ht+'px;animation:wbRainFall '+(0.3+Math.random()*0.4).toFixed(2)+'s '+(Math.random()*0.9).toFixed(2)+'s linear infinite;opacity:'+(0.5+Math.random()*0.5).toFixed(2)+';');
+      scene.appendChild(drop);
     }
-    if(isCloudy||isRainy||isStormy){
-      var cc=isStormy?'rgba(80,95,110,0.88)':isRainy?'rgba(120,150,180,0.9)':'rgba(255,255,255,0.95)';
-      scene.appendChild(mk('position:absolute;right:2%;top:8%;width:80px;height:36px;background:'+cc+';border-radius:50px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15));'));
-      scene.appendChild(mk('position:absolute;right:14%;top:2%;width:44px;height:44px;background:'+cc+';border-radius:50%;'));
-    } else {
-      scene.appendChild(mk('position:absolute;right:6%;top:36%;width:64px;height:24px;background:rgba(255,255,255,0.9);border-radius:24px;'));
+    if(isStormy){
+      var bolt=d('position:absolute;right:22%;top:2%;font-size:26px;animation:wbLightning 5s 1s ease-in-out infinite;filter:drop-shadow(0 0 8px #fff);');
+      bolt.textContent='⚡'; scene.appendChild(bolt);
     }
-    if(isRainy||isStormy){for(var ri=0;ri<22;ri++){scene.appendChild(mk('position:absolute;left:'+(Math.random()*100)+'%;top:0;width:1.5px;height:15px;background:rgba(180,220,255,0.75);border-radius:2px;animation:wbRainFall '+(0.3+Math.random()*0.4).toFixed(2)+'s '+(Math.random()*0.6).toFixed(2)+'s linear infinite;transform:rotate(15deg);'));}}
-    if(isSnowy){for(var si=0;si<16;si++){var sf=mk('position:absolute;left:'+(Math.random()*100)+'%;top:0;font-size:12px;animation:wbRainFall '+(1+Math.random()).toFixed(2)+'s '+(Math.random()).toFixed(2)+'s linear infinite;');sf.textContent='❄';scene.appendChild(sf);}}
-    if(isEvening) scene.appendChild(mk('position:absolute;bottom:0;left:0;right:0;height:45%;background:linear-gradient(to top,rgba(60,20,70,0.65),transparent);clip-path:polygon(0 100%,20% 30%,40% 60%,60% 20%,80% 50%,100% 25%,100% 100%);'));
-    if(isStormy){var bolt=mk('position:absolute;right:20%;top:5%;font-size:28px;');bolt.textContent='⚡';scene.appendChild(bolt);}
+  }
+
+  // ── SNOW ──
+  if(isSnowy){
+    for(var i=0;i<16;i++){
+      var flake=d('position:absolute;left:'+(Math.random()*100)+'%;top:0;font-size:'+(8+Math.random()*5).toFixed(0)+'px;animation:wbRainFall '+(1.2+Math.random()*1.5).toFixed(2)+'s '+(Math.random()*1.5).toFixed(2)+'s linear infinite;opacity:0.9;');
+      flake.textContent='❄'; scene.appendChild(flake);
+    }
+  }
+
+  // ── BIRDS (clear/sunny only) ──
+  if(!isCloudy&&!isRainy&&!isStormy&&!isSnowy&&!isNight&&!isEvening){
+    [[75,30],[65,40],[55,34]].forEach(function(p,i){
+      var b=d('position:absolute;right:'+p[0]+'%;top:'+p[1]+'%;font-size:9px;opacity:0.65;animation:wbBirdFly '+(3.5+i)+'s '+(i*0.7)+'s linear infinite;');
+      b.textContent='🐦'; scene.appendChild(b);
+    });
+  }
+
+  // ── EVENING: Mountain silhouette ──
+  if(isEvening){
+    scene.appendChild(d('position:absolute;bottom:0;left:0;right:0;height:48%;background:linear-gradient(to top,rgba(55,15,65,0.72),transparent);clip-path:polygon(0 100%,18% 25%,36% 55%,54% 18%,72% 48%,88% 22%,100% 40%,100% 100%);'));
   }
 }
 
+// SVG weather icons (natural, no emoji)
+var WB_SVG = {
+  sunrise: '<svg viewBox="0 0 40 30" width="36" height="27"><defs><radialGradient id="sg" cx="50%" cy="80%"><stop offset="0%" stop-color="#ffe566"/><stop offset="100%" stop-color="#ff9900" stop-opacity="0"/></radialGradient></defs><circle cx="20" cy="22" r="9" fill="#ffe033" filter="url(#sg)"/><line x1="20" y1="8" x2="20" y2="4" stroke="#ffb300" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="14" x2="5" y2="11" stroke="#ffb300" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="14" x2="35" y2="11" stroke="#ffb300" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="22" x2="39" y2="22" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/></svg>',
+  sun: '<svg viewBox="0 0 40 40" width="34" height="34"><circle cx="20" cy="20" r="9" fill="#ffe033"/><g stroke="#ffb300" stroke-width="2" stroke-linecap="round"><line x1="20" y1="3" x2="20" y2="7"/><line x1="20" y1="33" x2="20" y2="37"/><line x1="3" y1="20" x2="7" y2="20"/><line x1="33" y1="20" x2="37" y2="20"/><line x1="7.5" y1="7.5" x2="10.5" y2="10.5"/><line x1="29.5" y1="29.5" x2="32.5" y2="32.5"/><line x1="7.5" y1="32.5" x2="10.5" y2="29.5"/><line x1="29.5" y1="10.5" x2="32.5" y2="7.5"/></g></svg>',
+  suncloudy: '<svg viewBox="0 0 44 36" width="40" height="33"><circle cx="14" cy="14" r="8" fill="#ffe033"/><g stroke="#ffb300" stroke-width="1.8" stroke-linecap="round"><line x1="14" y1="2" x2="14" y2="5"/><line x1="4" y1="8" x2="6.5" y2="10.5"/><line x1="2" y1="14" x2="5" y2="14"/></g><ellipse cx="30" cy="26" rx="12" ry="7" fill="rgba(255,255,255,0.9)"/><ellipse cx="24" cy="23" rx="7" ry="7" fill="rgba(255,255,255,0.9)"/><ellipse cx="34" cy="21" rx="6" ry="6" fill="rgba(255,255,255,0.9)"/></svg>',
+  cloudy: '<svg viewBox="0 0 46 30" width="42" height="27"><ellipse cx="23" cy="22" rx="18" ry="8" fill="rgba(220,235,250,0.95)"/><ellipse cx="16" cy="17" rx="9" ry="9" fill="rgba(220,235,250,0.95)"/><ellipse cx="26" cy="14" rx="8" ry="8" fill="rgba(220,235,250,0.95)"/><ellipse cx="34" cy="18" rx="8" ry="7" fill="rgba(220,235,250,0.95)"/></svg>',
+  rain: '<svg viewBox="0 0 46 38" width="42" height="35"><ellipse cx="23" cy="16" rx="18" ry="8" fill="rgba(140,170,200,0.9)"/><ellipse cx="16" cy="11" rx="9" ry="9" fill="rgba(140,170,200,0.9)"/><ellipse cx="26" cy="9" rx="8" ry="8" fill="rgba(140,170,200,0.9)"/><line x1="15" y1="26" x2="12" y2="34" stroke="rgba(100,180,255,0.9)" stroke-width="2" stroke-linecap="round"/><line x1="23" y1="26" x2="20" y2="34" stroke="rgba(100,180,255,0.9)" stroke-width="2" stroke-linecap="round"/><line x1="31" y1="26" x2="28" y2="34" stroke="rgba(100,180,255,0.9)" stroke-width="2" stroke-linecap="round"/></svg>',
+  sunset: '<svg viewBox="0 0 44 32" width="40" height="29"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ff6a00"/><stop offset="100%" stop-color="#ffb347"/></linearGradient></defs><rect width="44" height="32" fill="url(#sky)" rx="4" opacity="0.3"/><circle cx="22" cy="22" r="9" fill="#ff8c00"/><line x1="0" y1="22" x2="44" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/></svg>',
+  moon: '<svg viewBox="0 0 36 36" width="32" height="32"><path d="M20 6 A14 14 0 1 0 20 30 A10 10 0 1 1 20 6Z" fill="#e8f0ff"/><circle cx="26" cy="10" r="2" fill="rgba(200,220,255,0.6)"/></svg>',
+  night: '<svg viewBox="0 0 40 36" width="36" height="32"><path d="M22 5 A12 12 0 1 0 22 29 A9 9 0 1 1 22 5Z" fill="#c8d8f0"/><circle cx="10" cy="8" r="1.5" fill="#fff" opacity="0.9"/><circle cx="32" cy="6" r="1" fill="#fff" opacity="0.8"/><circle cx="6" cy="20" r="1" fill="#fff" opacity="0.7"/><circle cx="36" cy="18" r="1.5" fill="#fff" opacity="0.9"/></svg>'
+};
+
 function wbGetGreeting(h,m){
   var t=h+m/60;
-  if(t>=5&&t<6)     return {text:'Good Morning! 🌅',sub:'Sunrise! Fresh start.'};
-  if(t>=6&&t<8)     return {text:'Good Morning! 🌤️',sub:'Early morning! Inventory awaits.'};
-  if(t>=8&&t<12)    return {text:'Good Morning! ☀️',sub:"Great morning! Here's your overview."};
-  if(t>=12&&t<13)   return {text:'Good Afternoon! 🌞',sub:"Noon hustle! Here's your overview."};
-  if(t>=13&&t<15)   return {text:'Good Afternoon! ⛅',sub:'Good afternoon! Inventory overview.'};
-  if(t>=15&&t<17)   return {text:'Good Afternoon! 🌤️',sub:"Keep going! Here's your overview."};
-  if(t>=17&&t<18.5) return {text:'Good Evening! 🌇',sub:"Golden hour! Here's your overview."};
-  if(t>=18.5&&t<20) return {text:'Good Evening! 🌆',sub:'Good evening! Inventory overview.'};
-  if(t>=20&&t<22)   return {text:'Good Night! 🌃',sub:'Winding down! Inventory overview.'};
-  return {text:'Good Night! 🌉',sub:"Late night! Here's your overview."};
+  if(t>=5&&t<6)     return {text:'Good Morning!',icon:'sunrise',sub:'Sunrise! Fresh start to your day.'};
+  if(t>=6&&t<8)     return {text:'Good Morning!',icon:'suncloudy',sub:'Early morning! Inventory awaits.'};
+  if(t>=8&&t<12)    return {text:'Good Morning!',icon:'sun',sub:"Great morning! Here's your overview."};
+  if(t>=12&&t<13)   return {text:'Good Afternoon!',icon:'sun',sub:"Noon hustle! Here's your overview."};
+  if(t>=13&&t<15)   return {text:'Good Afternoon!',icon:'suncloudy',sub:'Good afternoon! Inventory overview.'};
+  if(t>=15&&t<17)   return {text:'Good Afternoon!',icon:'suncloudy',sub:"Keep going! Here's your overview."};
+  if(t>=17&&t<18.5) return {text:'Good Evening!',icon:'sunset',sub:"Golden hour! Here's your overview."};
+  if(t>=18.5&&t<20) return {text:'Good Evening!',icon:'cloudy',sub:'Good evening! Inventory overview.'};
+  if(t>=20&&t<22)   return {text:'Good Night!',icon:'moon',sub:'Winding down! Inventory overview.'};
+  return {text:'Good Night!',icon:'night',sub:"Late night! Here's your overview."};
 }
 function wbUpdateGreeting(){
   var n=new Date(),g=wbGetGreeting(n.getHours(),n.getMinutes());
   var e=document.getElementById('wb-greeting');if(e)e.textContent=g.text;
   var e2=document.getElementById('wb-sub');if(e2)e2.textContent=g.sub;
+  var ic=document.getElementById('wbGreetIcon');if(ic)ic.innerHTML=WB_SVG[g.icon]||'';
 }
 
 function wbFetchWeather(lat,lon,city){
@@ -1142,5 +1229,6 @@ window.clearFilter = clearFilter;
 window.clearSearch = clearSearch;
 window.closeNotifPanel = closeNotifPanel;
 </script>
+
 </body>
 </html>
