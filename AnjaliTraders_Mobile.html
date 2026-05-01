@@ -226,15 +226,92 @@ window.addEventListener("load", function() {
 <!-- DASHBOARD -->
 <div id="dashboard" class="page active">
 
-  <!-- Greeting Bar -->
-  <div id="greetingBar" style="background:linear-gradient(135deg,#0a1e40 0%,#0d2a5e 60%,#0f3a7a 100%);border-radius:20px;padding:16px 20px;margin-bottom:16px;border:1px solid rgba(56,189,248,0.25);box-shadow:0 4px 18px rgba(14,165,233,0.12);display:flex;align-items:center;justify-content:space-between;position:sticky;top:120px;z-index:50;">
-    <div>
-      <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:0.5px;" id="greetingText">Good Day! ☀️</div>
-      <div style="font-size:12px;color:rgba(180,220,248,0.75);margin-top:5px;" id="greetingSub">Here's your inventory overview.</div>
-      <div id="tempDisplay" style="font-size:13px;color:#38bdf8;margin-top:3px;font-weight:600;display:none;"></div>
+  <!-- Premium Weather Bar -->
+  <style>
+  /* ── Weather Bar ── */
+  #weatherBar {
+    position:sticky; top:120px; z-index:50;
+    border-radius:20px; padding:13px 14px 12px 16px;
+    margin-bottom:16px; overflow:hidden; color:#fff;
+    background:linear-gradient(135deg,#1a1a6e 0%,#6a3093 40%,#c25b2e 80%,#ff8c00 100%);
+    box-shadow:0 6px 22px rgba(0,0,0,0.25);
+    transition:transform 0.3s,box-shadow 0.3s;
+  }
+  #weatherBar:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.32);}
+
+  /* Left glow strip */
+  #weatherBar .wb-lglow{position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,#fff,#feb3b3);border-radius:20px 0 0 20px;}
+
+  /* Animated scene (right side, row-1 only) */
+  #wbScene{position:absolute;right:0;top:0;width:42%;height:72px;overflow:hidden;border-radius:0 20px 0 0;pointer-events:none;}
+
+  /* ROW 1 — Greeting + Time */
+  .wb-row1{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:2;}
+  .wb-row1-left{max-width:58%;}
+  #wb-greeting{font-size:17px;font-weight:800;font-family:'Orbitron',sans-serif;line-height:1.2;white-space:nowrap;}
+  #wb-sub{font-size:11px;color:rgba(255,255,255,0.78);margin-top:2px;}
+  .wb-timebox{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border-radius:10px;padding:5px 9px;text-align:right;border:1px solid rgba(255,255,255,0.2);}
+  #wb-time{font-size:14px;font-weight:700;font-family:'Orbitron',sans-serif;display:block;}
+  #wb-date{font-size:9px;opacity:0.8;display:block;}
+
+  /* Animated divider between rows */
+  .wb-divider{position:relative;height:2px;margin:10px 0 9px 0;border-radius:2px;overflow:hidden;background:rgba(255,255,255,0.12);}
+  .wb-divider::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.9),transparent);animation:wbShimmer 2s linear infinite;}
+  @keyframes wbShimmer{0%{left:-40%;}100%{left:140%;}}
+
+  /* ROW 2 — Weather chips */
+  .wb-chips{display:flex;flex-wrap:nowrap;gap:6px;position:relative;z-index:2;overflow-x:auto;scrollbar-width:none;}
+  .wb-chips::-webkit-scrollbar{display:none;}
+  .wb-chip{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.16);backdrop-filter:blur(6px);padding:5px 9px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);flex-shrink:0;}
+  .wb-chip .chip-val{font-size:12px;font-weight:700;font-family:'Orbitron',sans-serif;display:block;white-space:nowrap;}
+  .wb-chip .chip-lbl{font-size:9px;opacity:0.75;display:block;}
+
+  /* Keyframes for scene */
+  @keyframes wbSunPulse{0%,100%{box-shadow:0 0 18px 5px rgba(255,200,50,0.5);}50%{box-shadow:0 0 30px 12px rgba(255,160,10,0.7);}}
+  @keyframes wbCloudFloat{0%,100%{transform:translateX(0);}50%{transform:translateX(7px);}}
+  @keyframes wbBirdFly{0%{transform:translate(0,0);}50%{transform:translate(-10px,-5px);}100%{transform:translate(-20px,-2px);}}
+  @keyframes wbRain{from{transform:translateY(-20px);opacity:0;}to{transform:translateY(80px);opacity:1;}}
+  @keyframes wbMoonGlow{0%,100%{box-shadow:0 0 14px 4px rgba(200,220,255,0.4);}50%{box-shadow:0 0 26px 10px rgba(180,210,255,0.6);}}
+  @keyframes wbStarTwinkle{0%,100%{opacity:1;}50%{opacity:0.2;}}
+  </style>
+
+  <div id="weatherBar">
+    <div class="wb-lglow"></div>
+    <div id="wbScene"></div>
+
+    <!-- Row 1: Greeting + Time -->
+    <div class="wb-row1">
+      <div class="wb-row1-left">
+        <div id="wb-greeting">Good Day! ☀️</div>
+        <div id="wb-sub">Here's your inventory overview.</div>
+      </div>
+      <div class="wb-timebox">
+        <span id="wb-time">--:--</span>
+        <span id="wb-date">-- --- --</span>
+      </div>
     </div>
-    <div style="text-align:center;min-width:54px;">
-      <div style="font-size:36px;line-height:1;" id="greetingIcon">☀️</div>
+
+    <!-- Animated Divider -->
+    <div class="wb-divider"></div>
+
+    <!-- Row 2: Weather Chips -->
+    <div class="wb-chips">
+      <div class="wb-chip" id="wbc-temp" style="display:none">
+        <span>🌡️</span>
+        <div><span class="chip-val" id="wbv-temp">--</span><span class="chip-lbl">Temp</span></div>
+      </div>
+      <div class="wb-chip" id="wbc-wind" style="display:none">
+        <span>💨</span>
+        <div><span class="chip-val" id="wbv-wind">--</span><span class="chip-lbl">Wind</span></div>
+      </div>
+      <div class="wb-chip" id="wbc-hum" style="display:none">
+        <span>💧</span>
+        <div><span class="chip-val" id="wbv-hum">--</span><span class="chip-lbl">Humidity</span></div>
+      </div>
+      <div class="wb-chip" id="wbc-loc" style="display:none">
+        <span>📍</span>
+        <div><span class="chip-val" id="wbv-loc" style="font-size:10px;white-space:nowrap;">--</span><span class="chip-lbl">Location</span></div>
+      </div>
     </div>
   </div>
   <div class="stat-grid">
@@ -251,8 +328,8 @@ window.addEventListener("load", function() {
       <div class="stat-value" style="color:#e11d48;" id="outStockCount">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Today's Sales (Qty)</div>
-      <div class="stat-value" style="color:#059669;" id="todaySales">0</div>
+      <div class="stat-label">Today's Sales</div>
+      <div class="stat-value" style="color:#059669;" id="todaySales">₹0</div>
     </div>
   </div>
   <div class="section-title">🔍 Product Search</div>
@@ -457,8 +534,6 @@ document.getElementById('bellBtn').addEventListener('click', () => {
 });
 
 // ── Update Bell & Notifications ──
-let prevProductsMap = null; // for update detection
-
 function updateNotifications() {
   const lowItems = products.filter(p => p.stock > 0 && p.stock <= (p.minStock || 5));
   const outItems = products.filter(p => p.stock <= 0);
@@ -467,7 +542,6 @@ function updateNotifications() {
 
   // New product detection
   let newProducts = [];
-  let updatedProducts = [];
   if (knownProductIds !== null) {
     newProducts = products.filter(p => !knownProductIds.has(p.id));
   }
@@ -477,28 +551,7 @@ function updateNotifications() {
     newProducts.forEach(p => knownProductIds.add(p.id));
   }
 
-  // Product update detection (existing products whose data changed)
-  if (prevProductsMap !== null) {
-    products.forEach(p => {
-      if (!prevProductsMap.has(p.id)) return; // new product, already handled
-      const prev = prevProductsMap.get(p.id);
-      if (
-        prev.name !== p.name ||
-        prev.category !== p.category ||
-        prev.unit !== p.unit ||
-        prev.buyPrice !== p.buyPrice ||
-        prev.sellPrice !== p.sellPrice ||
-        prev.minStock !== p.minStock ||
-        prev.stock !== p.stock
-      ) {
-        updatedProducts.push(p);
-      }
-    });
-  }
-  // Update prevProductsMap
-  prevProductsMap = new Map(products.map(p => [p.id, {...p}]));
-
-  const totalBadge = total + newProducts.length + updatedProducts.length;
+  const totalBadge = total + newProducts.length;
   if (totalBadge > 0) {
     badge.textContent = totalBadge;
     badge.style.display = 'block';
@@ -509,14 +562,8 @@ function updateNotifications() {
   // Build notification list
   let html = '';
   newProducts.forEach(p => {
-    html += `<div class="notif-item green" style="background:rgba(5,150,105,0.08);">
+    html += `<div class="notif-item green">
       <div class="notif-item-title">✅ New Product Added</div>
-      <div class="notif-item-sub">${escapeHtml(p.name)} | Stock: ${p.stock} ${p.unit}</div>
-    </div>`;
-  });
-  updatedProducts.forEach(p => {
-    html += `<div class="notif-item green" style="background:rgba(5,150,105,0.08);">
-      <div class="notif-item-title">🔄 Product Updated</div>
       <div class="notif-item-sub">${escapeHtml(p.name)} | Stock: ${p.stock} ${p.unit}</div>
     </div>`;
   });
@@ -712,30 +759,9 @@ function renderReports() {
 
 // ── Dashboard Today Sales ──
 function renderDashboardStats() {
-  var now = new Date();
-  var todayDD = String(now.getDate()).padStart(2,'0');
-  var todayMM = String(now.getMonth()+1).padStart(2,'0');
-  var todayYY = String(now.getFullYear());
-  var todayISO  = todayYY+'-'+todayMM+'-'+todayDD;   // 2026-04-30
-  var todayDDMM = todayDD+'/'+todayMM+'/'+todayYY;   // 30/04/2026
-
-  function isTodaySale(s) {
-    var d = s.date || '';
-    if (!d) return false;
-    // ISO format: 2026-04-30
-    if (d === todayISO) return true;
-    // dd/mm/yyyy: 30/04/2026
-    if (d === todayDDMM) return true;
-    // Firestore Timestamp object
-    if (d && typeof d === 'object' && d.toDate) {
-      var td = d.toDate();
-      return td.getDate()===now.getDate() && td.getMonth()===now.getMonth() && td.getFullYear()===now.getFullYear();
-    }
-    return false;
-  }
-
-  var todayS = sales.filter(isTodaySale).reduce(function(s,t){ return s+Number(t.qty||0); }, 0);
-  document.getElementById('todaySales').innerHTML = todayS.toLocaleString('en-IN');
+  const today = new Date().toISOString().split('T')[0];
+  const todayS = sales.filter(s => fmtDate(s.date) === today).reduce((s,t)=>s+Number(t.amount||t.total||0),0);
+  document.getElementById('todaySales').innerHTML = `₹${todayS.toLocaleString('en-IN')}`;
 }
 
 // ── MODALS ──
@@ -997,187 +1023,94 @@ function updateTopbarDate() {
   if(el2) el2.textContent = dayName;
 }
 
-// ── Greeting Bar Update (Live Sky Feel) ──
-function updateGreeting() {
-  var now = new Date();
-  var h = now.getHours();
-  var m = now.getMinutes();
-  var greetText, greetSub, icon;
-  var timeDecimal = h + m/60;
-
-  if (timeDecimal >= 5 && timeDecimal < 6) {
-    // Sunrise: 🌅 Sunrise
-    greetText = 'Good Morning! 🌅';
-    greetSub  = 'Sunrise! A fresh start to your day.';
-    icon      = '🌅';
-  } else if (timeDecimal >= 6 && timeDecimal < 8) {
-    // Early morning: 🌤️ Sun Behind Small Cloud
-    greetText = 'Good Morning! 🌤️';
-    greetSub  = 'Early morning! Your inventory awaits.';
-    icon      = '🌤️';
-  } else if (timeDecimal >= 8 && timeDecimal < 12) {
-    // Morning sunshine: ☀️ Sun
-    greetText = 'Good Morning! ☀️';
-    greetSub  = 'Good morning! Here\'s your inventory overview.';
-    icon      = '☀️';
-  } else if (timeDecimal >= 12 && timeDecimal < 13) {
-    // Noon blazing: 🌞 Sun With Face
-    greetText = 'Good Afternoon! 🌞';
-    greetSub  = 'Noon hustle! Here\'s your inventory overview.';
-    icon      = '🌞';
-  } else if (timeDecimal >= 13 && timeDecimal < 15) {
-    // Afternoon partly cloudy: ⛅ Sun Behind Cloud
-    greetText = 'Good Afternoon! ⛅';
-    greetSub  = 'Good afternoon! Here\'s your inventory overview.';
-    icon      = '⛅';
-  } else if (timeDecimal >= 15 && timeDecimal < 17) {
-    // Late afternoon: 🌤️ Sun Behind Small Cloud
-    greetText = 'Good Afternoon! 🌤️';
-    greetSub  = 'Keep going! Here\'s your inventory overview.';
-    icon      = '🌤️';
-  } else if (timeDecimal >= 17 && timeDecimal < 18.5) {
-    // Sunset golden hour: 🌇 Sunset
-    greetText = 'Good Evening! 🌇';
-    greetSub  = 'Golden hour! Here\'s your inventory overview.';
-    icon      = '🌇';
-  } else if (timeDecimal >= 18.5 && timeDecimal < 20) {
-    // Evening city dusk: 🌆 Cityscape At Dusk
-    greetText = 'Good Evening! 🌆';
-    greetSub  = 'Good evening! Here\'s your inventory overview.';
-    icon      = '🌆';
-  } else if (timeDecimal >= 20 && timeDecimal < 22) {
-    // Night with stars: 🌃 Night With Stars
-    greetText = 'Good Night! 🌃';
-    greetSub  = 'Winding down! Here\'s your inventory overview.';
-    icon      = '🌃';
-  } else {
-    // Late night bridge: 🌉 Bridge At Night
-    greetText = 'Good Night! 🌉';
-    greetSub  = 'Late night! Here\'s your inventory overview.';
-    icon      = '🌉';
-  }
-
-  var gt = document.getElementById('greetingText');
-  var gs = document.getElementById('greetingSub');
-  var gi = document.getElementById('greetingIcon');
-  if(gt) gt.textContent = greetText;
-  if(gs) gs.textContent = greetSub;
-  if(gi) gi.textContent = icon;
+// ── Weather Bar System ──
+function wbClock(){
+  var n=new Date(),h=n.getHours(),m=n.getMinutes();
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var time=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  var date=days[n.getDay()]+', '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
+  var e=document.getElementById('wb-time'); if(e) e.textContent=time;
+  var e2=document.getElementById('wb-date'); if(e2) e2.textContent=date;
 }
+setInterval(wbClock,1000); wbClock();
 
-// ── Weather Config for Balaghat ──
-var BALAGHAT_LAT = 21.8303;
-var BALAGHAT_LON = 80.1921;
-
-// WMO weather code → { icon, label, bgGradient, textColor }
-function getWeatherTheme(wcode, isNight) {
-  if (wcode === 0) {
-    // Clear sky
-    if (isNight) return { icon:'🌙', label:'Clear Night', bg:'linear-gradient(135deg,#0a0f2e 0%,#1a1a4e 60%,#2d1b69 100%)', accent:'#a78bfa' };
-    return { icon:'☀️', label:'Clear Sky', bg:'linear-gradient(135deg,#f97316 0%,#fb923c 40%,#fde68a 100%)', accent:'#fff' };
-  } else if (wcode <= 2) {
-    // Partly cloudy
-    if (isNight) return { icon:'🌛', label:'Partly Cloudy', bg:'linear-gradient(135deg,#1e2a4a 0%,#2d3f6e 60%,#374151 100%)', accent:'#93c5fd' };
-    return { icon:'⛅', label:'Partly Cloudy', bg:'linear-gradient(135deg,#0369a1 0%,#0ea5e9 50%,#7dd3fc 100%)', accent:'#fff' };
-  } else if (wcode === 3) {
-    // Overcast
-    if (isNight) return { icon:'☁️', label:'Overcast', bg:'linear-gradient(135deg,#1f2937 0%,#374151 60%,#4b5563 100%)', accent:'#d1d5db' };
-    return { icon:'☁️', label:'Overcast', bg:'linear-gradient(135deg,#374151 0%,#6b7280 50%,#9ca3af 100%)', accent:'#fff' };
-  } else if (wcode <= 48) {
-    // Fog / mist
-    return { icon:'🌫️', label:'Foggy', bg:'linear-gradient(135deg,#4b5563 0%,#6b7280 50%,#9ca3af 100%)', accent:'#e5e7eb' };
-  } else if (wcode <= 57) {
-    // Drizzle
-    return { icon:'🌦️', label:'Drizzle', bg:'linear-gradient(135deg,#1e3a5f 0%,#1e40af 50%,#3b82f6 100%)', accent:'#bfdbfe' };
-  } else if (wcode <= 67) {
-    // Rain
-    return { icon:'🌧️', label:'Rainy', bg:'linear-gradient(135deg,#1e3a5f 0%,#1d4ed8 50%,#2563eb 100%)', accent:'#93c5fd' };
-  } else if (wcode <= 77) {
-    // Snow
-    return { icon:'❄️', label:'Snowy', bg:'linear-gradient(135deg,#e0f2fe 0%,#bae6fd 50%,#7dd3fc 100%)', accent:'#0369a1' };
-  } else if (wcode <= 82) {
-    // Showers
-    return { icon:'🌩️', label:'Heavy Rain', bg:'linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1d4ed8 100%)', accent:'#60a5fa' };
+function renderWbScene(hour,wCode){
+  var scene=document.getElementById('wbScene'); if(!scene) return;
+  scene.innerHTML='';
+  var isNight=(hour>=20||hour<5),isEvening=(hour>=17&&hour<20);
+  var isRainy=wCode&&wCode>60,isCloudy=wCode&&wCode>=2&&!isRainy;
+  var bar=document.getElementById('weatherBar');
+  if(bar){
+    if(isNight) bar.style.background='linear-gradient(135deg,#0a0a2e 0%,#1a1a5e 50%,#0d2a5e 100%)';
+    else if(isEvening) bar.style.background='linear-gradient(135deg,#1a1a6e 0%,#6a3093 40%,#c25b2e 80%,#ff8c00 100%)';
+    else if(isRainy) bar.style.background='linear-gradient(135deg,#1c2b3a 0%,#2d4a6e 50%,#3a5f8a 100%)';
+    else if(isCloudy) bar.style.background='linear-gradient(135deg,#2c3e6e 0%,#4a6fa5 50%,#7a9ec0 100%)';
+    else bar.style.background='linear-gradient(135deg,#1a1a6e 0%,#6a3093 40%,#c25b2e 80%,#ff8c00 100%)';
+  }
+  function mk(css){ var d=document.createElement('div'); d.style.cssText=css; return d; }
+  if(isNight){
+    scene.appendChild(mk('position:absolute;right:28%;top:18%;width:34px;height:34px;background:radial-gradient(circle at 35% 35%,#e8f0ff,#aabbdd);border-radius:50%;animation:wbMoonGlow 3s ease-in-out infinite;'));
+    ['12%,8%','55%,15%','28%,6%','70%,20%','80%,8%'].forEach(function(p){var a=p.split(',');scene.appendChild(mk('position:absolute;right:'+a[0]+';top:'+a[1]+';width:2px;height:2px;background:#fff;border-radius:50%;animation:wbStarTwinkle '+(1+Math.random()*1.5).toFixed(1)+'s '+(Math.random()*1.5).toFixed(1)+'s ease-in-out infinite;'));});
   } else {
-    // Thunderstorm
-    return { icon:'⛈️', label:'Thunderstorm', bg:'linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%)', accent:'#f59e0b' };
+    scene.appendChild(mk('position:absolute;right:30%;top:'+(isEvening?'20%':'12%')+';width:40px;height:40px;background:radial-gradient(circle,#ffe566,#ff9a00);border-radius:50%;animation:wbSunPulse 2.5s ease-in-out infinite;'));
+    if(isCloudy||isRainy){
+      scene.appendChild(mk('position:absolute;right:10%;top:30%;background:rgba(255,255,255,0.9);border-radius:16px;width:58px;height:22px;animation:wbCloudFloat 4s ease-in-out infinite;'));
+    } else {
+      scene.appendChild(mk('position:absolute;right:6%;top:38%;background:rgba(255,255,255,0.88);border-radius:24px;width:64px;height:24px;animation:wbCloudFloat 5s ease-in-out infinite;'));
+      ['58%,14%','65%,22%','72%,16%'].forEach(function(p,i){var a=p.split(','),b=mk('position:absolute;right:'+a[0]+';top:'+a[1]+';font-size:9px;opacity:0.75;animation:wbBirdFly '+(3+i)+'s '+(i*0.5)+'s linear infinite;');b.textContent='🐦';scene.appendChild(b);});
+    }
+    if(isRainy){for(var i=0;i<16;i++){scene.appendChild(mk('position:absolute;left:'+(Math.random()*100)+'%;top:0;width:2px;height:12px;background:rgba(180,220,255,0.6);border-radius:2px;animation:wbRain '+(0.4+Math.random()*0.5).toFixed(2)+'s '+(Math.random()).toFixed(2)+'s linear infinite;'));}}
+    if(isEvening) scene.appendChild(mk('position:absolute;bottom:0;right:0;width:100%;height:45%;background:linear-gradient(to top,rgba(80,30,80,0.65),transparent);clip-path:polygon(0 100%,25% 35%,50% 65%,75% 25%,100% 55%,100% 100%);'));
   }
 }
 
-// ── Fetch Live Weather for Balaghat ──
-function fetchTemperature() {
-  fetch('https://api.open-meteo.com/v1/forecast?latitude='+BALAGHAT_LAT+'&longitude='+BALAGHAT_LON+'&current_weather=true&hourly=relativehumidity_2m&timezone=Asia%2FKolkata&forecast_days=1')
-    .then(function(r){ return r.json(); })
-    .then(function(data) {
-      if (!data || !data.current_weather) return;
-
-      var temp   = Math.round(data.current_weather.temperature);
-      var wcode  = data.current_weather.weathercode;
-      var isDay  = data.current_weather.is_day === 1;
-      var windKmh = Math.round(data.current_weather.windspeed || 0);
-
-      // Get humidity for current hour
-      var humid = '';
-      try {
-        var nowH = new Date().getHours();
-        humid = (data.hourly && data.hourly.relativehumidity_2m)
-          ? data.hourly.relativehumidity_2m[nowH] + '%'
-          : '';
-      } catch(e) { humid = ''; }
-
-      var theme = getWeatherTheme(wcode, !isDay);
-
-      // Update greeting bar background
-      var bar = document.getElementById('greetingBar');
-      if (bar) {
-        bar.style.background  = theme.bg;
-        bar.style.borderColor = 'rgba(255,255,255,0.15)';
-        bar.style.boxShadow   = '0 4px 20px rgba(0,0,0,0.25)';
-      }
-
-      // Update greeting icon to weather icon
-      var gi = document.getElementById('greetingIcon');
-      if (gi) gi.textContent = theme.icon;
-
-      // Update greeting text color
-      var gt = document.getElementById('greetingText');
-      var gs = document.getElementById('greetingSub');
-      if (gt) gt.style.color = '#ffffff';
-      if (gs) gs.style.color = 'rgba(255,255,255,0.8)';
-
-      // Show weather info
-      var tEl = document.getElementById('tempDisplay');
-      if (tEl) {
-        var info = theme.icon + ' ' + temp + '°C  |  ' + theme.label;
-        if (windKmh) info += '  |  💨 ' + windKmh + ' km/h';
-        if (humid)   info += '  |  💧 ' + humid;
-        info += '  •  Balaghat';
-        tEl.textContent    = info;
-        tEl.style.display  = 'block';
-        tEl.style.color    = theme.accent;
-        tEl.style.fontSize = '11px';
-        tEl.style.fontWeight = '600';
-        tEl.style.marginTop  = '6px';
-        tEl.style.letterSpacing = '0.3px';
-      }
-    })
-    .catch(function(){ /* silently fail */ });
+function wbGetGreeting(h,m){
+  var t=h+m/60;
+  if(t>=5&&t<6)    return {text:'Good Morning! 🌅',sub:'Sunrise! Fresh start to your day.'};
+  if(t>=6&&t<8)    return {text:'Good Morning! 🌤️',sub:'Early morning! Inventory awaits.'};
+  if(t>=8&&t<12)   return {text:'Good Morning! ☀️',sub:"Great morning! Here's your overview."};
+  if(t>=12&&t<13)  return {text:'Good Afternoon! 🌞',sub:"Noon hustle! Here's your overview."};
+  if(t>=13&&t<15)  return {text:'Good Afternoon! ⛅',sub:'Good afternoon! Inventory overview.'};
+  if(t>=15&&t<17)  return {text:'Good Afternoon! 🌤️',sub:"Keep going! Here's your overview."};
+  if(t>=17&&t<18.5)return {text:'Good Evening! 🌇',sub:"Golden hour! Here's your overview."};
+  if(t>=18.5&&t<20)return {text:'Good Evening! 🌆',sub:'Good evening! Inventory overview.'};
+  if(t>=20&&t<22)  return {text:'Good Night! 🌃',sub:'Winding down! Inventory overview.'};
+  return {text:'Good Night! 🌉',sub:"Late night! Here's your overview."};
+}
+function wbUpdateGreeting(){
+  var n=new Date(),g=wbGetGreeting(n.getHours(),n.getMinutes());
+  var e=document.getElementById('wb-greeting'); if(e) e.textContent=g.text;
+  var e2=document.getElementById('wb-sub'); if(e2) e2.textContent=g.sub;
 }
 
-// ── Init date/greeting on load ──
-(function(){
+function wbFetchWeather(lat,lon,city){
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true&hourly=relativehumidity_2m&timezone=auto')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var cw=d.current_weather; if(!cw) return;
+      var hum='--';
+      if(d.hourly&&d.hourly.relativehumidity_2m) hum=d.hourly.relativehumidity_2m[new Date().getHours()]+'%';
+      function chip(id,val){var c=document.getElementById('wbc-'+id),v=document.getElementById('wbv-'+id);if(c)c.style.display='flex';if(v)v.textContent=val;}
+      chip('temp',Math.round(cw.temperature)+'°C');
+      chip('wind',Math.round(cw.windspeed)+' km/h');
+      chip('hum',hum);
+      chip('loc',city||'Current');
+      renderWbScene(new Date().getHours(),cw.weathercode);
+    }).catch(function(){});
+}
+
+(function wbInit(){
   updateTopbarDate();
-  updateGreeting();
-  fetchTemperature();
-  // Update clock every minute
-  setInterval(function(){
-    updateTopbarDate();
-    updateGreeting();
-  }, 60000);
-  // Refresh weather every 15 minutes
-  setInterval(function(){
-    fetchTemperature();
-  }, 15 * 60 * 1000);
+  wbUpdateGreeting();
+  renderWbScene(new Date().getHours(),0);
+  setInterval(function(){updateTopbarDate();wbUpdateGreeting();renderWbScene(new Date().getHours(),0);},60000);
+  function tryIP(){fetch('https://ipapi.co/json/').then(function(r){return r.json();}).then(function(d){if(d&&d.latitude)wbFetchWeather(d.latitude,d.longitude,d.city);}).catch(function(){});}
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      fetch('https://ipapi.co/json/').then(function(r){return r.json();}).then(function(d){wbFetchWeather(pos.coords.latitude,pos.coords.longitude,d.city||'Current');}).catch(function(){wbFetchWeather(pos.coords.latitude,pos.coords.longitude,'Current');});
+    },tryIP,{timeout:6000});
+  } else { tryIP(); }
 })();
 
 // ── Auth & Start ──
