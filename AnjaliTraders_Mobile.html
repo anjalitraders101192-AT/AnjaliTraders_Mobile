@@ -277,6 +277,10 @@ window.addEventListener("load", function() {
   <div id="weatherBar">
     <div id="wbLglow"></div>
     <div id="wbScene"></div>
+    <!-- Clock: absolute top-right -->
+    <div style="position:absolute;top:10px;right:12px;z-index:3;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border-radius:9px;padding:5px 10px;border:1px solid rgba(160,80,255,0.4);">
+      <span id="wb-time" style="font-size:14px;font-weight:700;font-family:'Orbitron',sans-serif;color:#c084fc;text-shadow:0 0 10px rgba(192,132,252,0.7);letter-spacing:1px;">--:--</span>
+    </div>
     <div id="wbContent">
       <!-- Row 1: Greeting + Icon -->
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
@@ -291,10 +295,7 @@ window.addEventListener("load", function() {
         <div class="wb-chip" id="wbc-wind" style="display:none"><span>💨</span><div><span class="chip-val" id="wbv-wind">--</span><span class="chip-lbl">Wind</span></div></div>
         <div class="wb-chip" id="wbc-hum" style="display:none"><span>💧</span><div><span class="chip-val" id="wbv-hum">--</span><span class="chip-lbl">Humidity</span></div></div>
         <div class="wb-chip" id="wbc-loc" style="display:none"><span>📍</span><div><span class="chip-val" id="wbv-loc" style="font-size:10px;white-space:nowrap;">--</span><span class="chip-lbl">Location</span></div></div>
-        <!-- Clock chip at end -->
-        <div style="margin-left:auto;flex-shrink:0;background:rgba(0,0,0,0.25);backdrop-filter:blur(10px);border-radius:10px;padding:6px 11px;border:1px solid rgba(255,255,255,0.25);">
-          <span id="wb-time" style="font-size:15px;font-weight:700;font-family:'Orbitron',sans-serif;color:#7DF9FF;text-shadow:0 0 10px rgba(125,249,255,0.6);letter-spacing:1px;">--:--</span>
-        </div>
+
       </div>
     </div>
   </div>
