@@ -1,21 +1,21 @@
 {
   "name": "Anjali Traders IMS",
-  "short_name": "AT IMS",
+  "short_name": "Anjali Traders",
   "description": "Anjali Traders Inventory Management System",
-  "start_url": "./AnjaliTraders_IMS_FIXED_4_.html",
+  "start_url": "./AnjaliTraders_Mobile_v3.html",
   "display": "standalone",
-  "background_color": "#071a1f",
-  "theme_color": "#00e5ff",
-  "orientation": "portrait-primary",
+  "background_color": "#0a1e40",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "https://anjalitraders101192-at.github.io/anjalitraders-ims/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "https://anjalitraders101192-at.github.io/anjalitraders-ims/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
