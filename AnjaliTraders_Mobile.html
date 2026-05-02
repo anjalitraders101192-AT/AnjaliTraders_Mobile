@@ -258,18 +258,22 @@ window.addEventListener("load", function() {
   /* Chips */
   .wb-chips{display:flex;align-items:center;flex-wrap:nowrap;gap:6px;overflow-x:auto;scrollbar-width:none;}
   .wb-chips::-webkit-scrollbar{display:none;}
-  .wb-chip{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,0.18);
+  .wb-chip{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,0.22);
     backdrop-filter:blur(8px);padding:5px 9px;border-radius:10px;
     border:1px solid rgba(255,255,255,0.25);flex-shrink:0;}
   .wb-chip .chip-val{font-size:12px;font-weight:700;font-family:'Orbitron',sans-serif;
     display:block;white-space:nowrap;color:#fff;text-shadow:0 0 6px rgba(255,255,255,0.5);}
-  .wb-chip .chip-lbl{font-size:9px;opacity:0.78;display:block;color:#d0eeff;}
+  .wb-chip .chip-lbl{font-size:9px;opacity:0.85;display:block;}
   /* Animations */
-  @keyframes wbSunPulse{0%,100%{box-shadow:0 0 22px 8px rgba(255,220,50,0.6);}50%{box-shadow:0 0 44px 20px rgba(255,170,10,0.8);}}
+  @keyframes wbSunPulse{0%,100%{box-shadow:0 0 18px 6px rgba(255,220,50,0.5),0 0 50px 20px rgba(255,180,0,0.15);}50%{box-shadow:0 0 36px 14px rgba(255,220,50,0.8),0 0 80px 36px rgba(255,170,0,0.3);}}
+  @keyframes wbSunRays{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
   @keyframes wbCloudDrift{0%,100%{transform:translateX(0);}50%{transform:translateX(10px);}}
   @keyframes wbRainFall{0%{transform:translateY(-30px);opacity:0;}80%{opacity:1;}100%{transform:translateY(120px);opacity:0;}}
   @keyframes wbMoonGlow{0%,100%{box-shadow:0 0 14px 4px rgba(200,220,255,0.45);}50%{box-shadow:0 0 28px 12px rgba(180,210,255,0.65);}}
-  @keyframes wbStarBlink{0%,100%{opacity:1;}50%{opacity:0.1;}}
+  @keyframes wbStarBlink{0%{opacity:1;transform:scale(1);}25%{opacity:0.15;transform:scale(0.7);}50%{opacity:0.9;transform:scale(1.2);}75%{opacity:0.2;transform:scale(0.8);}100%{opacity:1;transform:scale(1);}}
+  @keyframes wbCloud1{0%,100%{transform:translateX(0);}50%{transform:translateX(10px);}}
+  @keyframes wbCloud2{0%,100%{transform:translateX(0);}50%{transform:translateX(-8px);}}
+  @keyframes wbCloud3{0%,100%{transform:translateX(0);}50%{transform:translateX(6px);}}
   @keyframes wbBirdMove{0%{transform:translate(0,0);}50%{transform:translate(-12px,-5px);}100%{transform:translate(-24px,-2px);}}
   @keyframes wbLightning{0%,88%,100%{opacity:0;}90%,95%{opacity:1;}92%,97%{opacity:0.2;}}
   </style>
@@ -291,10 +295,10 @@ window.addEventListener("load", function() {
       <div class="wb-divider"></div>
       <!-- Row 2: Chips + Clock at end -->
       <div class="wb-chips">
-        <div class="wb-chip" id="wbc-temp" style="display:none"><span>🌡️</span><div><span class="chip-val" id="wbv-temp">--</span><span class="chip-lbl">Temp</span></div></div>
-        <div class="wb-chip" id="wbc-wind" style="display:none"><span>💨</span><div><span class="chip-val" id="wbv-wind">--</span><span class="chip-lbl">Wind</span></div></div>
-        <div class="wb-chip" id="wbc-hum" style="display:none"><span>💧</span><div><span class="chip-val" id="wbv-hum">--</span><span class="chip-lbl">Humidity</span></div></div>
-        <div class="wb-chip" id="wbc-loc" style="display:none"><span>📍</span><div><span class="chip-val" id="wbv-loc" style="font-size:10px;white-space:nowrap;">--</span><span class="chip-lbl">Location</span></div></div>
+        <div class="wb-chip" id="wbc-temp"><span>🌡️</span><div><span class="chip-val" id="wbv-temp">--</span><span class="chip-lbl">Temp</span></div></div>
+        <div class="wb-chip" id="wbc-wind"><span>💨</span><div><span class="chip-val" id="wbv-wind">--</span><span class="chip-lbl">Wind</span></div></div>
+        <div class="wb-chip" id="wbc-hum"><span>💧</span><div><span class="chip-val" id="wbv-hum">--</span><span class="chip-lbl">Humidity</span></div></div>
+        <div class="wb-chip" id="wbc-loc"><span>📍</span><div><span class="chip-val" id="wbv-loc" style="font-size:10px;white-space:nowrap;">--</span><span class="chip-lbl">Location</span></div></div>
 
       </div>
     </div>
@@ -1043,120 +1047,156 @@ function renderWbScene(hour,wCode){
   if(!scene||!bar) return;
   scene.innerHTML='';
 
-  var isNight=(hour>=20||hour<5);
+  var isNight  =(hour>=20||hour<5);
   var isEvening=(hour>=17&&hour<20);
-  var isMorning=(hour>=5&&hour<9);
-  var isRainy=wCode>60&&wCode<=82;
-  var isStormy=wCode>=95;
-  var isCloudy=wCode>=2&&wCode<=45&&!isRainy&&!isStormy;
-  var isSnowy=wCode>=70&&wCode<=77;
-  var isClear=wCode===0||(wCode<=1&&!isNight);
+  var isMorning=(hour>=5&&hour<8);
+  var isDawn   =(hour>=8&&hour<10);
+  var isRainy  =wCode>60&&wCode<=82;
+  var isStormy =wCode>=95;
+  var isCloudy =wCode>=2&&wCode<=45&&!isRainy&&!isStormy;
+  var isSnowy  =wCode>=70&&wCode<=77;
 
-  // ── Background per weather ──
-  if(isNight)        bar.style.background='linear-gradient(160deg,#05071a 0%,#0f1830 60%,#1a2540 100%)';
-  else if(isStormy)  bar.style.background='linear-gradient(160deg,#1a1a1a 0%,#2c3340 50%,#3d4f60 100%)';
-  else if(isRainy)   bar.style.background='linear-gradient(160deg,#1c2b3a 0%,#2d4460 55%,#4a6a90 100%)';
-  else if(isSnowy)   bar.style.background='linear-gradient(160deg,#c0d0e0 0%,#d8e8f0 60%,#eef4f8 100%)';
-  else if(isCloudy)  bar.style.background='linear-gradient(160deg,#5ba3d9 0%,#7bbfee 50%,#a8d8f5 100%)';
-  else if(isMorning) bar.style.background='linear-gradient(160deg,#ff6a00 0%,#ffa040 40%,#ffd080 80%,#fff5cc 100%)';
-  else if(isEvening) bar.style.background='linear-gradient(160deg,#1a1a6e 0%,#6a3093 35%,#c94b2e 70%,#ff8c00 100%)';
-  else               bar.style.background='linear-gradient(160deg,#1e90cc 0%,#56c0f0 40%,#a8dff5 80%,#ffd700 100%)';
+  // ── Vivo-style sky backgrounds ──
+  if(isNight)
+    bar.style.background='linear-gradient(180deg,#020a18 0%,#060f28 45%,#0a1535 100%)';
+  else if(isStormy)
+    bar.style.background='linear-gradient(180deg,#1a1f28 0%,#252e3a 55%,#303d4e 100%)';
+  else if(isRainy)
+    bar.style.background='linear-gradient(180deg,#1a2a40 0%,#243860 50%,#3a5580 100%)';
+  else if(isSnowy)
+    bar.style.background='linear-gradient(180deg,#c5d8e8 0%,#ddeef8 60%,#f0f8ff 100%)';
+  else if(isCloudy)
+    bar.style.background='linear-gradient(160deg,#4a90c8 0%,#6aaedd 40%,#a8ccee 75%,#c8e0f5 100%)';
+  else if(isMorning)
+    bar.style.background='linear-gradient(160deg,#2060a0 0%,#4090c8 30%,#80bcde 65%,#c0dff0 100%)';
+  else if(isEvening)
+    bar.style.background='linear-gradient(160deg,#1a1050 0%,#5a2080 30%,#c04828 65%,#e87818 100%)';
+  else
+    bar.style.background='linear-gradient(160deg,#3888c8 0%,#5aaad8 30%,#7ec4e8 60%,#b8ddf5 85%,#dff0fa 100%)';
 
-  function d(css){ var el=document.createElement('div'); el.style.cssText=css; return el; }
-  function cls(className,css){ var el=document.createElement('div'); el.className=className; if(css) el.style.cssText=css; return el; }
+  function mk(css,txt){
+    var el=document.createElement('div');
+    el.style.cssText='position:absolute;'+css;
+    if(txt) el.textContent=txt;
+    return el;
+  }
 
-  // ── NIGHT: Moon + Stars ──
+  // ══════════════════════════════════════
+  // NIGHT — deep sky, moon, many stars
+  // ══════════════════════════════════════
   if(isNight){
-    var moon=cls('wb-moon','right:12%;top:14%;width:36px;height:36px;animation:wbMoonGlow 3s ease-in-out infinite;');
-    scene.appendChild(moon);
-    // crescent shadow
-    var cr=d('position:absolute;right:14%;top:16%;width:28px;height:28px;border-radius:50%;background:rgba(5,7,26,0.5);transform:translate(6px,-4px);');
-    scene.appendChild(cr);
-    [[88,8],[72,6],[62,18],[80,24],[55,10],[76,32],[65,4],[85,18]].forEach(function(p,i){
-      var s=cls('wb-star','right:'+p[0]+'%;top:'+p[1]+'%;width:'+(i%3===0?3:2)+'px;height:'+(i%3===0?3:2)+'px;animation:wbStarBlink '+(1+i*0.25).toFixed(2)+'s '+(i*0.18).toFixed(2)+'s ease-in-out infinite;');
-      scene.appendChild(s);
+    // Subtle star field (lots of tiny dots like screenshot)
+    var starData=[
+      [8,5,2.5,1.8],[15,12,1.5,2.5],[22,6,2,1.2],[30,15,1.5,3],
+      [38,8,2.5,2],[45,18,1.5,1.5],[52,4,2,2.8],[60,14,1.5,1.8],
+      [68,7,2.5,2.2],[75,20,1.5,3.2],[82,10,2,1.5],[90,5,1.5,2],
+      [12,25,1.5,1.8],[28,30,2,2.5],[42,28,1.5,1.2],[58,32,2,2],[72,26,1.5,3],
+      [85,22,2,1.8],[5,38,1.5,2.2],[20,42,2,1.5],[35,45,1.5,2.8],
+      [50,40,2,2],[65,48,1.5,1.5],[80,38,2,3],[92,44,1.5,2]
+    ];
+    starData.forEach(function(s,i){
+      var el=mk('left:'+s[0]+'%;top:'+s[1]+'%;width:'+s[2]+'px;height:'+s[2]+'px;background:#fff;border-radius:50%;animation:wbStarBlink '+(s[3]).toFixed(1)+'s '+(i*0.15).toFixed(1)+'s ease-in-out infinite;');
+      scene.appendChild(el);
     });
+    // A few slightly brighter stars
+    [[25,10,3],[55,22,3],[78,8,3.5]].forEach(function(s,i){
+      var el=mk('left:'+s[0]+'%;top:'+s[1]+'%;width:'+s[2]+'px;height:'+s[2]+'px;background:#e8f4ff;border-radius:50%;box-shadow:0 0 4px 1px rgba(180,210,255,0.8);animation:wbStarBlink '+(1.5+i*0.6).toFixed(1)+'s '+(i*0.4).toFixed(1)+'s ease-in-out infinite;');
+      scene.appendChild(el);
+    });
+    // Moon — crescent like screenshot
+    var moonWrap=mk('right:8%;top:8%;width:44px;height:44px;');
+    var moonFull=mk('left:0;top:0;width:44px;height:44px;background:radial-gradient(circle at 40% 40%,#f0f8ff,#c8dcf0);border-radius:50%;box-shadow:0 0 16px 4px rgba(180,210,255,0.5);animation:wbMoonGlow 3s ease-in-out infinite;');
+    var moonShadow=mk('left:6px;top:-3px;width:38px;height:38px;background:#071030;border-radius:50%;');
+    moonWrap.appendChild(moonFull);
+    moonWrap.appendChild(moonShadow);
+    scene.appendChild(moonWrap);
     return;
   }
 
-  // ── SUN (all daytime non-stormy) ──
+  // ══════════════════════════════════════
+  // DAY — SUN
+  // ══════════════════════════════════════
   if(!isStormy){
-    var sunR=isCloudy?'32%':isEvening?'8%':'10%';
-    var sunT=isEvening?'18%':isMorning?'22%':'8%';
-    var sunSz=isCloudy?40:isEvening?44:50;
-    var sun=cls('wb-sun','right:'+sunR+';top:'+sunT+';width:'+sunSz+'px;height:'+sunSz+'px;animation:wbSunPulse 3s ease-in-out infinite;');
+    var sRight=isCloudy?'28%':isEvening?'4%':'2%';
+    var sTop  =isEvening?'10%':isMorning?'20%':'2%';
+    var sSz   =isCloudy?38:isEvening?50:56;
+    // Big outer glow (like Vivo screenshot — sun partially off screen top-right)
+    // Sun glow halo
+    var glowSz=sSz*2.4;
+    var gx=parseFloat(sRight)||2;
+    var gy=parseFloat(sTop)||2;
+    var sunGlow=mk('right:'+(gx-(sSz*0.7))+'%;top:'+(gy-(sSz*0.7))+'%;width:'+glowSz+'px;height:'+glowSz+'px;border-radius:50%;background:radial-gradient(circle,rgba(255,240,160,0.5) 0%,rgba(255,200,60,0.2) 45%,transparent 70%);animation:wbSunPulse 3s ease-in-out infinite;');
+    scene.appendChild(sunGlow);
+    // Sun core
+    var sun=mk('right:'+sRight+';top:'+sTop+';width:'+sSz+'px;height:'+sSz+'px;background:radial-gradient(circle at 35% 35%,#fff8c0,#ffe050 30%,#ffb800 80%,#ff9500 100%);border-radius:50%;box-shadow:0 0 20px 8px rgba(255,210,40,0.7),0 0 50px 20px rgba(255,180,0,0.3);');
     scene.appendChild(sun);
   }
 
-  // ── CLOUDS: CSS pseudo-element style realistic puffs ──
+  // ══════════════════════════════════════
+  // CLOUDS — realistic CSS puffs
+  // ══════════════════════════════════════
   if(isCloudy||isRainy||isStormy){
-    var alpha=isStormy?0.82:isRainy?0.88:0.93;
-    var cr=isStormy?'rgba(80,95,112,'+alpha+')':isRainy?'rgba(100,130,165,'+alpha+')':'rgba(240,248,255,'+alpha+')';
-    var sd=isStormy?'0 6px 20px rgba(0,0,0,0.4)':'0 6px 18px rgba(0,0,0,0.12)';
+    var cBase=isStormy?'rgba(60,80,100,0.92)':isRainy?'rgba(80,110,145,0.90)':'rgba(225,240,255,0.93)';
+    var cDark=isStormy?'rgba(45,62,80,0.95)':isRainy?'rgba(65,95,130,0.92)':'rgba(200,225,248,0.90)';
 
-    // Cloud 1 — big main
-    var c1=d('position:absolute;right:2%;top:6%;width:82px;height:34px;background:'+cr+';border-radius:50px;animation:wbCloud1 7s ease-in-out infinite;box-shadow:'+sd+';filter:blur(0.3px);');
-    var c1t=d('position:absolute;right:18px;top:-16px;width:40px;height:40px;background:'+cr+';border-radius:50%;box-shadow:'+sd+';');
-    var c1t2=d('position:absolute;right:44px;top:-10px;width:30px;height:30px;background:'+cr+';border-radius:50%;');
-    c1.appendChild(c1t); c1.appendChild(c1t2); scene.appendChild(c1);
+    // Cloud 1 — big, right side (like screenshot)
+    var cl1=mk('right:1%;top:4%;width:88px;height:32px;background:'+cBase+';border-radius:50px;box-shadow:0 4px 14px rgba(0,0,0,0.12);animation:wbCloud1 8s ease-in-out infinite;');
+    cl1.appendChild(mk('right:14px;top:-18px;width:42px;height:42px;background:'+cBase+';border-radius:50%;'));
+    cl1.appendChild(mk('right:40px;top:-12px;width:32px;height:32px;background:'+cBase+';border-radius:50%;'));
+    cl1.appendChild(mk('right:62px;top:-8px;width:24px;height:24px;background:'+cDark+';border-radius:50%;'));
+    scene.appendChild(cl1);
 
-    // Cloud 2 — smaller, behind
-    var c2=d('position:absolute;right:42%;top:18%;width:60px;height:24px;background:'+cr+';border-radius:40px;opacity:0.78;animation:wbCloud2 9s 1.5s ease-in-out infinite;filter:blur(0.5px);');
-    var c2t=d('position:absolute;right:12px;top:-12px;width:28px;height:28px;background:'+cr+';border-radius:50%;');
-    c2.appendChild(c2t); scene.appendChild(c2);
+    // Cloud 2 — medium, center-right
+    var cl2=mk('right:38%;top:22%;width:66px;height:24px;background:'+cDark+';border-radius:40px;opacity:0.82;animation:wbCloud2 10s 2s ease-in-out infinite;');
+    cl2.appendChild(mk('right:10px;top:-14px;width:32px;height:32px;background:'+cDark+';border-radius:50%;'));
+    cl2.appendChild(mk('right:32px;top:-8px;width:22px;height:22px;background:'+cBase+';border-radius:50%;'));
+    scene.appendChild(cl2);
 
-    // Cloud 3 — tiny, far left
-    var c3=d('position:absolute;right:68%;top:8%;width:44px;height:18px;background:'+cr+';border-radius:30px;opacity:0.6;animation:wbCloud3 11s 3s ease-in-out infinite;');
-    scene.appendChild(c3);
+    // Cloud 3 — small, left
+    var cl3=mk('right:66%;top:10%;width:50px;height:18px;background:'+cBase+';border-radius:30px;opacity:0.65;animation:wbCloud3 12s 4s ease-in-out infinite;');
+    cl3.appendChild(mk('right:8px;top:-10px;width:22px;height:22px;background:'+cBase+';border-radius:50%;'));
+    scene.appendChild(cl3);
   }
 
-  // ── RAIN: Realistic drops ──
+  // ══════════════════════════════════════
+  // RAIN
+  // ══════════════════════════════════════
   if(isRainy||isStormy){
-    var cnt=isStormy?32:22;
+    var cnt=isStormy?30:20;
     for(var i=0;i<cnt;i++){
-      var ht=isStormy?20:15;
-      var drop=cls('wb-raindrop','left:'+(Math.random()*108-4)+'%;top:0;height:'+ht+'px;animation:wbRainFall '+(0.3+Math.random()*0.4).toFixed(2)+'s '+(Math.random()*0.9).toFixed(2)+'s linear infinite;opacity:'+(0.5+Math.random()*0.5).toFixed(2)+';');
+      var drop=mk('left:'+(Math.random()*108-4)+'%;top:0;width:1.5px;height:'+(isStormy?20:14)+'px;background:linear-gradient(to bottom,rgba(150,200,255,0),rgba(150,200,255,0.85));border-radius:2px;animation:wbRainFall '+(0.28+Math.random()*0.38).toFixed(2)+'s '+(Math.random()*0.8).toFixed(2)+'s linear infinite;transform:rotate(12deg);');
       scene.appendChild(drop);
     }
     if(isStormy){
-      var bolt=d('position:absolute;right:22%;top:2%;font-size:26px;animation:wbLightning 5s 1s ease-in-out infinite;filter:drop-shadow(0 0 8px #fff);');
-      bolt.textContent='⚡'; scene.appendChild(bolt);
+      var bolt=mk('right:20%;top:3%;font-size:24px;animation:wbLightning 5s 0.8s ease-in-out infinite;filter:drop-shadow(0 0 8px #ffffa0);');
+      bolt.textContent='⚡';
+      scene.appendChild(bolt);
     }
   }
 
-  // ── SNOW ──
+  // SNOW
   if(isSnowy){
     for(var i=0;i<16;i++){
-      var flake=d('position:absolute;left:'+(Math.random()*100)+'%;top:0;font-size:'+(8+Math.random()*5).toFixed(0)+'px;animation:wbRainFall '+(1.2+Math.random()*1.5).toFixed(2)+'s '+(Math.random()*1.5).toFixed(2)+'s linear infinite;opacity:0.9;');
-      flake.textContent='❄'; scene.appendChild(flake);
+      var fl=mk('left:'+(Math.random()*100)+'%;top:0;font-size:'+(8+Math.random()*5).toFixed(0)+'px;animation:wbRainFall '+(1.2+Math.random()*1.5).toFixed(2)+'s '+(Math.random()*1.5).toFixed(2)+'s linear infinite;opacity:0.9;');
+      fl.textContent='❄';
+      scene.appendChild(fl);
     }
   }
 
-  // ── BIRDS (clear/sunny only) ──
-  if(!isCloudy&&!isRainy&&!isStormy&&!isSnowy&&!isNight&&!isEvening){
-    [[75,30],[65,40],[55,34]].forEach(function(p,i){
-      var b=d('position:absolute;right:'+p[0]+'%;top:'+p[1]+'%;font-size:9px;opacity:0.65;animation:wbBirdFly '+(3.5+i)+'s '+(i*0.7)+'s linear infinite;');
-      b.textContent='🐦'; scene.appendChild(b);
+  // BIRDS — clear sunny day only
+  if(!isCloudy&&!isRainy&&!isStormy&&!isSnowy&&!isNight&&!isEvening&&!isMorning){
+    [[72,32],[62,42],[52,36]].forEach(function(p,i){
+      var b=mk('right:'+p[0]+'%;top:'+p[1]+'%;font-size:8px;opacity:0.55;animation:wbBirdFly '+(4+i)+'s '+(i*0.8)+'s linear infinite;');
+      b.textContent='🐦';
+      scene.appendChild(b);
     });
   }
 
-  // ── EVENING: Mountain silhouette ──
+  // EVENING mountains
   if(isEvening){
-    scene.appendChild(d('position:absolute;bottom:0;left:0;right:0;height:48%;background:linear-gradient(to top,rgba(55,15,65,0.72),transparent);clip-path:polygon(0 100%,18% 25%,36% 55%,54% 18%,72% 48%,88% 22%,100% 40%,100% 100%);'));
+    scene.appendChild(mk('bottom:0;left:0;right:0;height:46%;background:linear-gradient(to top,rgba(40,10,55,0.75),transparent);clip-path:polygon(0 100%,15% 28%,32% 58%,50% 20%,68% 50%,85% 24%,100% 42%,100% 100%);'));
   }
 }
-
-// SVG weather icons (natural, no emoji)
-var WB_SVG = {
-  sunrise: '<svg viewBox="0 0 40 30" width="36" height="27"><defs><radialGradient id="sg" cx="50%" cy="80%"><stop offset="0%" stop-color="#ffe566"/><stop offset="100%" stop-color="#ff9900" stop-opacity="0"/></radialGradient></defs><circle cx="20" cy="22" r="9" fill="#ffe033" filter="url(#sg)"/><line x1="20" y1="8" x2="20" y2="4" stroke="#ffb300" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="14" x2="5" y2="11" stroke="#ffb300" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="14" x2="35" y2="11" stroke="#ffb300" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="22" x2="39" y2="22" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/></svg>',
-  sun: '<svg viewBox="0 0 40 40" width="34" height="34"><circle cx="20" cy="20" r="9" fill="#ffe033"/><g stroke="#ffb300" stroke-width="2" stroke-linecap="round"><line x1="20" y1="3" x2="20" y2="7"/><line x1="20" y1="33" x2="20" y2="37"/><line x1="3" y1="20" x2="7" y2="20"/><line x1="33" y1="20" x2="37" y2="20"/><line x1="7.5" y1="7.5" x2="10.5" y2="10.5"/><line x1="29.5" y1="29.5" x2="32.5" y2="32.5"/><line x1="7.5" y1="32.5" x2="10.5" y2="29.5"/><line x1="29.5" y1="10.5" x2="32.5" y2="7.5"/></g></svg>',
-  suncloudy: '<svg viewBox="0 0 44 36" width="40" height="33"><circle cx="14" cy="14" r="8" fill="#ffe033"/><g stroke="#ffb300" stroke-width="1.8" stroke-linecap="round"><line x1="14" y1="2" x2="14" y2="5"/><line x1="4" y1="8" x2="6.5" y2="10.5"/><line x1="2" y1="14" x2="5" y2="14"/></g><ellipse cx="30" cy="26" rx="12" ry="7" fill="rgba(255,255,255,0.9)"/><ellipse cx="24" cy="23" rx="7" ry="7" fill="rgba(255,255,255,0.9)"/><ellipse cx="34" cy="21" rx="6" ry="6" fill="rgba(255,255,255,0.9)"/></svg>',
-  cloudy: '<svg viewBox="0 0 46 30" width="42" height="27"><ellipse cx="23" cy="22" rx="18" ry="8" fill="rgba(220,235,250,0.95)"/><ellipse cx="16" cy="17" rx="9" ry="9" fill="rgba(220,235,250,0.95)"/><ellipse cx="26" cy="14" rx="8" ry="8" fill="rgba(220,235,250,0.95)"/><ellipse cx="34" cy="18" rx="8" ry="7" fill="rgba(220,235,250,0.95)"/></svg>',
-  rain: '<svg viewBox="0 0 46 38" width="42" height="35"><ellipse cx="23" cy="16" rx="18" ry="8" fill="rgba(140,170,200,0.9)"/><ellipse cx="16" cy="11" rx="9" ry="9" fill="rgba(140,170,200,0.9)"/><ellipse cx="26" cy="9" rx="8" ry="8" fill="rgba(140,170,200,0.9)"/><line x1="15" y1="26" x2="12" y2="34" stroke="rgba(100,180,255,0.9)" stroke-width="2" stroke-linecap="round"/><line x1="23" y1="26" x2="20" y2="34" stroke="rgba(100,180,255,0.9)" stroke-width="2" stroke-linecap="round"/><line x1="31" y1="26" x2="28" y2="34" stroke="rgba(100,180,255,0.9)" stroke-width="2" stroke-linecap="round"/></svg>',
-  sunset: '<svg viewBox="0 0 44 32" width="40" height="29"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ff6a00"/><stop offset="100%" stop-color="#ffb347"/></linearGradient></defs><rect width="44" height="32" fill="url(#sky)" rx="4" opacity="0.3"/><circle cx="22" cy="22" r="9" fill="#ff8c00"/><line x1="0" y1="22" x2="44" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/></svg>',
-  moon: '<svg viewBox="0 0 36 36" width="32" height="32"><path d="M20 6 A14 14 0 1 0 20 30 A10 10 0 1 1 20 6Z" fill="#e8f0ff"/><circle cx="26" cy="10" r="2" fill="rgba(200,220,255,0.6)"/></svg>',
-  night: '<svg viewBox="0 0 40 36" width="36" height="32"><path d="M22 5 A12 12 0 1 0 22 29 A9 9 0 1 1 22 5Z" fill="#c8d8f0"/><circle cx="10" cy="8" r="1.5" fill="#fff" opacity="0.9"/><circle cx="32" cy="6" r="1" fill="#fff" opacity="0.8"/><circle cx="6" cy="20" r="1" fill="#fff" opacity="0.7"/><circle cx="36" cy="18" r="1.5" fill="#fff" opacity="0.9"/></svg>'
-};
 
 function wbGetGreeting(h,m){
   var t=h+m/60;
@@ -1186,11 +1226,11 @@ function wbFetchWeather(lat,lon,city){
     .then(function(d){
       var cur=d&&d.current;
       if(!cur) return;
-      function chip(id,val){var c=document.getElementById('wbc-'+id),v=document.getElementById('wbv-'+id);if(c)c.style.display='flex';if(v)v.textContent=val;}
-      chip('temp',Math.round(cur.temperature_2m)+'°C');
-      chip('wind',Math.round(cur.wind_speed_10m)+' km/h');
-      chip('hum',Math.round(cur.relative_humidity_2m)+'%');
-      chip('loc',city||'Current');
+      function sv(id,val){var v=document.getElementById('wbv-'+id);if(v)v.textContent=val;}
+      sv('temp',Math.round(cur.temperature_2m)+'°C');
+      sv('wind',Math.round(cur.wind_speed_10m)+' km/h');
+      sv('hum',Math.round(cur.relative_humidity_2m)+'%');
+      sv('loc',city||'...');
       renderWbScene(new Date().getHours(),cur.weather_code||0);
     })
     .catch(function(){
@@ -1200,11 +1240,11 @@ function wbFetchWeather(lat,lon,city){
         .then(function(d){
           if(!d||!d.current_weather) return;
           var cw=d.current_weather;
-          function chip(id,val){var c=document.getElementById('wbc-'+id),v=document.getElementById('wbv-'+id);if(c)c.style.display='flex';if(v)v.textContent=val;}
-          chip('temp',Math.round(cw.temperature)+'°C');
-          chip('wind',Math.round(cw.windspeed)+' km/h');
-          chip('hum','--');
-          chip('loc',city||'Current');
+          function sv(id,val){var v=document.getElementById('wbv-'+id);if(v)v.textContent=val;}
+          sv('temp',Math.round(cw.temperature)+'°C');
+          sv('wind',Math.round(cw.windspeed)+' km/h');
+          sv('hum','--');
+          sv('loc',city||'...');
           renderWbScene(new Date().getHours(),cw.weathercode||0);
         }).catch(function(){});
     });
