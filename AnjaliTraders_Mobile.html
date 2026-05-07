@@ -128,6 +128,76 @@ body { background:#eef2f7; min-height:100vh; max-width:500px; margin:0 auto; ove
 .notif-item:last-child { border-bottom:none; }
 .notif-item.red { border-left:3px solid #e11d48; }
 .notif-item.yellow { border-left:3px solid #d97706; }
+
+/* ── App Popup (Install / Exit / Permission) ── */
+.app-popup-overlay {
+  position:fixed; inset:0; z-index:9000;
+  background:rgba(10,20,50,0.82);
+  backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  animation:fadeIn 0.25s ease;
+}
+.app-popup-box {
+  background:linear-gradient(160deg,#0a1e40,#0d2a5e 70%,#0c2550);
+  border:1px solid rgba(56,189,248,0.3);
+  border-radius:28px;
+  padding:32px 24px 24px;
+  width:88%; max-width:340px;
+  text-align:center;
+  box-shadow:0 8px 48px rgba(14,165,233,0.3), 0 2px 12px rgba(0,0,0,0.5);
+  animation:slideUp 0.3s ease;
+}
+/* Blinking cyan border logo */
+.popup-logo-wrap {
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:20px;
+}
+.popup-logo-ring {
+  width:90px; height:90px; border-radius:50%;
+  border:3px solid #00e5ff;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 18px #00e5ff, 0 0 36px rgba(0,229,255,0.3);
+  animation:cyanBlink 1.4s ease-in-out infinite;
+  overflow:hidden;
+}
+@keyframes cyanBlink {
+  0%,100% { box-shadow:0 0 10px #00e5ff, 0 0 22px rgba(0,229,255,0.3); border-color:#00e5ff; }
+  50% { box-shadow:0 0 28px #00e5ff, 0 0 60px rgba(0,229,255,0.6), inset 0 0 8px rgba(0,229,255,0.15); border-color:#7fffff; }
+}
+.popup-logo-ring img {
+  width:100%; height:100%; object-fit:cover; border-radius:50%;
+}
+.popup-title {
+  font-family:'Orbitron',sans-serif;
+  font-size:16px; font-weight:800;
+  color:#38bdf8; letter-spacing:1px;
+  margin-bottom:8px;
+}
+.popup-sub {
+  font-size:13px; color:rgba(180,220,248,0.85);
+  line-height:1.5; margin-bottom:24px;
+}
+.popup-btn-row { display:flex; gap:10px; }
+.popup-btn {
+  flex:1; padding:12px 8px; border-radius:14px;
+  font-size:13px; font-weight:700; cursor:pointer;
+  border:none; font-family:'Rajdhani',sans-serif;
+  letter-spacing:0.5px; transition:all 0.15s ease;
+}
+.popup-btn.primary {
+  background:linear-gradient(135deg,#0ea5e9,#0284c7);
+  color:#fff; box-shadow:0 4px 14px rgba(14,165,233,0.4);
+}
+.popup-btn.primary:active { transform:scale(0.97); }
+.popup-btn.secondary {
+  background:rgba(56,189,248,0.1);
+  color:#38bdf8; border:1px solid rgba(56,189,248,0.3);
+}
+.popup-btn.danger {
+  background:linear-gradient(135deg,#e11d48,#be123c);
+  color:#fff; box-shadow:0 4px 14px rgba(225,29,72,0.4);
+}
+.popup-icon { font-size:36px; margin-bottom:10px; }
 .notif-item.green { border-left:3px solid #059669; }
 .notif-item-title { font-weight:700; color:#1e3a5f; margin-bottom:2px; }
 .notif-item-sub { color:#6b8db0; }
@@ -409,6 +479,51 @@ window.addEventListener("load", function() {
 </div>
 
 <div id="toast" class="toast"></div>
+
+<!-- ── Install App Popup ── -->
+<div id="installPopup" class="app-popup-overlay" style="display:none;">
+  <div class="app-popup-box">
+    <div class="popup-logo-wrap">
+      <div class="popup-logo-ring"><img src="at_logo.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='🏪';" alt="AT" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
+    </div>
+    <div class="popup-title">📲 Install App</div>
+    <p class="popup-sub">Anjali Traders IMS ko apne phone mein install karein — offline bhi kaam karega!</p>
+    <div class="popup-btn-row">
+      <button class="popup-btn secondary" onclick="closeInstallPopup()">Baad Mein</button>
+      <button class="popup-btn primary" onclick="doInstallPWA()">✅ Install Karein</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Exit Confirm Popup ── -->
+<div id="exitPopup" class="app-popup-overlay" style="display:none;">
+  <div class="app-popup-box">
+    <div class="popup-logo-wrap">
+      <div class="popup-logo-ring"><img src="at_logo.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='🏪';" alt="AT" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
+    </div>
+    <div class="popup-title">🚪 App Band Karein?</div>
+    <p class="popup-sub">Kya aap Anjali Traders IMS band karna chahte hain?</p>
+    <div class="popup-btn-row">
+      <button class="popup-btn secondary" onclick="closeExitPopup()">Nahi, Rukein</button>
+      <button class="popup-btn danger" onclick="confirmExit()">Haan, Band Karein</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Permission Request Popup ── -->
+<div id="permPopup" class="app-popup-overlay" style="display:none;">
+  <div class="app-popup-box">
+    <div class="popup-logo-wrap">
+      <div class="popup-logo-ring"><img src="at_logo.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='🏪';" alt="AT" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
+    </div>
+    <div class="popup-title" id="permTitle">🔔 Notifications</div>
+    <p class="popup-sub" id="permSub">Low stock alerts aur updates ke liye notifications allow karein.</p>
+    <div class="popup-btn-row">
+      <button class="popup-btn secondary" onclick="skipPerm()">Skip</button>
+      <button class="popup-btn primary" id="permBtn" onclick="grantPerm()">Allow Karein</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
