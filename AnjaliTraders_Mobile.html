@@ -430,7 +430,7 @@ window.addEventListener("load", function() {
   <div class="app-popup-box">
     <div class="popup-logo-ring"><img src="at_logo.jpg" alt="AT" onerror="this.style.display='none';this.parentNode.textContent='🏪';"/></div>
     <div class="popup-title" id="permTitle">🔔 Notifications</div>
-    <p class="popup-sub" id="permSub">Low stock alerts aur updates ke liye notifications allow karein.</p>
+    <p class="popup-sub" id="permSub">Enable notifications for low stock alerts and updates.</p>
     <div class="popup-btn-row">
       <button class="popup-btn secondary" onclick="skipPerm()">Skip</button>
       <button class="popup-btn primary" id="permBtn" onclick="grantPerm()">Allow Access</button>
@@ -632,7 +632,7 @@ function skipPerm() {
   if (_permStep === 0) {
     _permStep = 1;
     document.getElementById('permTitle').textContent = '📍 Location';
-    document.getElementById('permSub').textContent = 'Weather data ke liye location allow karein.';
+    document.getElementById('permSub').textContent = 'Please allow location access for weather updates.';
     document.getElementById('permBtn').textContent = 'Allow Access';
   } else {
     document.getElementById('permPopup').style.display = 'none';
