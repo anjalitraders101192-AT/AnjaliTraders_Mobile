@@ -1050,7 +1050,7 @@ function wbClock(){
   var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var e=document.getElementById('wb-time');
-  var e3=document.getElementById('wb-time2'); if(e3) e3.textContent=time;
+  var e2=document.getElementById('wb-time2'); if(e2) e2.textContent=time;
   var e2=document.getElementById('wb-date');
   if(e) e.textContent=String(h).padStart(2,'0')+':'+String(mn).padStart(2,'0');
   if(e2) e2.textContent=days[n.getDay()]+', '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
@@ -1255,23 +1255,26 @@ function wbFetchWeather(lat,lon,city){
       sv('temp',Math.round(cur.temperature_2m)+'°C');
       sv('wind',Math.round(cur.wind_speed_10m)+' km/h');
       sv('hum',Math.round(cur.relative_humidity_2m)+'%');
-      sv('loc',city||'...');
       renderWbScene(new Date().getHours(),cur.weather_code||0);
     })
     .catch(function(){
-      // old format fallback
       fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true')
         .then(function(r){return r.json();})
         .then(function(d){
-          if(!d||!d.current_weather) return;
-          var cw=d.current_weather;
-          function sv(id,val){var v=document.getElementById('wbv-'+id);if(v)v.textContent=val;}
+          var cw=d&&d.current_weather;
+          if(!cw) return;
+          var sv=function(id,val){var v=document.getElementById('wbv-'+id);if(v)v.textContent=val;};
           sv('temp',Math.round(cw.temperature)+'°C');
           sv('wind',Math.round(cw.windspeed)+' km/h');
           sv('hum','--');
-          sv('loc',city||'...');
           renderWbScene(new Date().getHours(),cw.weathercode||0);
-        }).catch(function(){});
+        }).catch(function(){
+          // API failed - show N/A
+          ['temp','wind','hum'].forEach(function(id){
+            var v=document.getElementById('wbv-'+id);
+            if(v&&v.textContent==='--') v.textContent='N/A';
+          });
+        });
     });
 }
 
