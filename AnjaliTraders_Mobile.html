@@ -128,77 +128,22 @@ body { background:#eef2f7; min-height:100vh; max-width:500px; margin:0 auto; ove
 .notif-item:last-child { border-bottom:none; }
 .notif-item.red { border-left:3px solid #e11d48; }
 .notif-item.yellow { border-left:3px solid #d97706; }
-
-/* ── App Popup (Install / Exit / Permission) ── */
-.app-popup-overlay {
-  position:fixed; inset:0; z-index:9000;
-  background:rgba(10,20,50,0.82);
-  backdrop-filter:blur(8px);
-  display:flex; align-items:center; justify-content:center;
-  animation:fadeIn 0.25s ease;
-}
-.app-popup-box {
-  background:linear-gradient(160deg,#0a1e40,#0d2a5e 70%,#0c2550);
-  border:1px solid rgba(56,189,248,0.3);
-  border-radius:28px;
-  padding:32px 24px 24px;
-  width:88%; max-width:340px;
-  text-align:center;
-  box-shadow:0 8px 48px rgba(14,165,233,0.3), 0 2px 12px rgba(0,0,0,0.5);
-  animation:slideUp 0.3s ease;
-}
-/* Blinking cyan border logo */
-.popup-logo-wrap {
-  display:flex; align-items:center; justify-content:center;
-  margin-bottom:20px;
-}
-.popup-logo-ring {
-  width:90px; height:90px; border-radius:50%;
-  border:3px solid #00e5ff;
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 0 18px #00e5ff, 0 0 36px rgba(0,229,255,0.3);
-  animation:cyanBlink 1.4s ease-in-out infinite;
-  overflow:hidden;
-}
-@keyframes cyanBlink {
-  0%,100% { box-shadow:0 0 10px #00e5ff, 0 0 22px rgba(0,229,255,0.3); border-color:#00e5ff; }
-  50% { box-shadow:0 0 28px #00e5ff, 0 0 60px rgba(0,229,255,0.6), inset 0 0 8px rgba(0,229,255,0.15); border-color:#7fffff; }
-}
-.popup-logo-ring img {
-  width:100%; height:100%; object-fit:cover; border-radius:50%;
-}
-.popup-title {
-  font-family:'Orbitron',sans-serif;
-  font-size:16px; font-weight:800;
-  color:#38bdf8; letter-spacing:1px;
-  margin-bottom:8px;
-}
-.popup-sub {
-  font-size:13px; color:rgba(180,220,248,0.85);
-  line-height:1.5; margin-bottom:24px;
-}
-.popup-btn-row { display:flex; gap:10px; }
-.popup-btn {
-  flex:1; padding:12px 8px; border-radius:14px;
-  font-size:13px; font-weight:700; cursor:pointer;
-  border:none; font-family:'Rajdhani',sans-serif;
-  letter-spacing:0.5px; transition:all 0.15s ease;
-}
-.popup-btn.primary {
-  background:linear-gradient(135deg,#0ea5e9,#0284c7);
-  color:#fff; box-shadow:0 4px 14px rgba(14,165,233,0.4);
-}
-.popup-btn.primary:active { transform:scale(0.97); }
-.popup-btn.secondary {
-  background:rgba(56,189,248,0.1);
-  color:#38bdf8; border:1px solid rgba(56,189,248,0.3);
-}
-.popup-btn.danger {
-  background:linear-gradient(135deg,#e11d48,#be123c);
-  color:#fff; box-shadow:0 4px 14px rgba(225,29,72,0.4);
-}
-.popup-icon { font-size:36px; margin-bottom:10px; }
 .notif-item.green { border-left:3px solid #059669; }
+
+/* ── App Popups ── */
+.app-popup-overlay{position:fixed;inset:0;z-index:9999;background:rgba(5,15,40,0.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.25s ease;}
+.app-popup-box{background:linear-gradient(160deg,#071830,#0a2050 70%,#0c2a60);border:1px solid rgba(56,189,248,0.25);border-radius:28px;padding:28px 22px 22px;width:88%;max-width:330px;text-align:center;box-shadow:0 8px 48px rgba(14,165,233,0.35),0 2px 16px rgba(0,0,0,0.6);}
+.popup-logo-ring{width:88px;height:88px;border-radius:50%;border:3px solid #00e5ff;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;overflow:hidden;animation:cyanRingBlink 1.3s ease-in-out infinite;box-shadow:0 0 18px #00e5ff,0 0 36px rgba(0,229,255,0.3);}
+@keyframes cyanRingBlink{0%,100%{border-color:#00e5ff;box-shadow:0 0 10px #00e5ff,0 0 22px rgba(0,229,255,0.3);}50%{border-color:#80ffff;box-shadow:0 0 28px #00e5ff,0 0 60px rgba(0,229,255,0.65),inset 0 0 10px rgba(0,229,255,0.12);}}
+.popup-logo-ring img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.popup-title{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;color:#38bdf8;letter-spacing:1px;margin-bottom:8px;}
+.popup-sub{font-size:13px;color:rgba(180,220,248,0.85);line-height:1.5;margin-bottom:22px;}
+.popup-btn-row{display:flex;gap:10px;}
+.popup-btn{flex:1;padding:12px 8px;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;transition:transform 0.12s;}
+.popup-btn:active{transform:scale(0.97);}
+.popup-btn.primary{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;box-shadow:0 4px 14px rgba(14,165,233,0.4);}
+.popup-btn.secondary{background:rgba(56,189,248,0.1);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);}
+.popup-btn.danger{background:linear-gradient(135deg,#e11d48,#be123c);color:#fff;box-shadow:0 4px 14px rgba(225,29,72,0.4);}
 .notif-item-title { font-weight:700; color:#1e3a5f; margin-bottom:2px; }
 .notif-item-sub { color:#6b8db0; }
 .notif-scroll { max-height:60vh; overflow-y:auto; }
@@ -480,14 +425,25 @@ window.addEventListener("load", function() {
 
 <div id="toast" class="toast"></div>
 
-<!-- ── Install App Popup ── -->
+<!-- ── Permission Popup ── -->
+<div id="permPopup" class="app-popup-overlay" style="display:none;">
+  <div class="app-popup-box">
+    <div class="popup-logo-ring"><img src="at_logo.jpg" alt="AT" onerror="this.style.display='none';this.parentNode.textContent='🏪';"/></div>
+    <div class="popup-title" id="permTitle">🔔 Notifications</div>
+    <p class="popup-sub" id="permSub">Low stock alerts aur updates ke liye notifications allow karein.</p>
+    <div class="popup-btn-row">
+      <button class="popup-btn secondary" onclick="skipPerm()">Skip Karein</button>
+      <button class="popup-btn primary" id="permBtn" onclick="grantPerm()">Allow Karein</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Install Popup ── -->
 <div id="installPopup" class="app-popup-overlay" style="display:none;">
   <div class="app-popup-box">
-    <div class="popup-logo-wrap">
-      <div class="popup-logo-ring"><img src="at_logo.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='🏪';" alt="AT" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
-    </div>
+    <div class="popup-logo-ring"><img src="at_logo.jpg" alt="AT" onerror="this.style.display='none';this.parentNode.textContent='🏪';"/></div>
     <div class="popup-title">📲 Install App</div>
-    <p class="popup-sub">Anjali Traders IMS ko apne phone mein install karein — offline bhi kaam karega!</p>
+    <p class="popup-sub">Anjali Traders IMS ko home screen pe install karein — offline bhi kaam karega, faster experience!</p>
     <div class="popup-btn-row">
       <button class="popup-btn secondary" onclick="closeInstallPopup()">Baad Mein</button>
       <button class="popup-btn primary" onclick="doInstallPWA()">✅ Install Karein</button>
@@ -495,32 +451,15 @@ window.addEventListener("load", function() {
   </div>
 </div>
 
-<!-- ── Exit Confirm Popup ── -->
+<!-- ── Exit Popup ── -->
 <div id="exitPopup" class="app-popup-overlay" style="display:none;">
   <div class="app-popup-box">
-    <div class="popup-logo-wrap">
-      <div class="popup-logo-ring"><img src="at_logo.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='🏪';" alt="AT" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
-    </div>
+    <div class="popup-logo-ring"><img src="at_logo.jpg" alt="AT" onerror="this.style.display='none';this.parentNode.textContent='🏪';"/></div>
     <div class="popup-title">🚪 App Band Karein?</div>
     <p class="popup-sub">Kya aap Anjali Traders IMS band karna chahte hain?</p>
     <div class="popup-btn-row">
       <button class="popup-btn secondary" onclick="closeExitPopup()">Nahi, Rukein</button>
       <button class="popup-btn danger" onclick="confirmExit()">Haan, Band Karein</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── Permission Request Popup ── -->
-<div id="permPopup" class="app-popup-overlay" style="display:none;">
-  <div class="app-popup-box">
-    <div class="popup-logo-wrap">
-      <div class="popup-logo-ring"><img src="at_logo.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='🏪';" alt="AT" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
-    </div>
-    <div class="popup-title" id="permTitle">🔔 Notifications</div>
-    <p class="popup-sub" id="permSub">Low stock alerts aur updates ke liye notifications allow karein.</p>
-    <div class="popup-btn-row">
-      <button class="popup-btn secondary" onclick="skipPerm()">Skip</button>
-      <button class="popup-btn primary" id="permBtn" onclick="grantPerm()">Allow Karein</button>
     </div>
   </div>
 </div>
@@ -618,73 +557,68 @@ function showTab(tab, idx) {
   }, {passive:true});
 })();
 
-// ── Back Button (Android) with double-back exit ──
+// ── Back Button (Android) with Double-Back Exit ──
 var _lastBackTime = 0;
 window.addEventListener('popstate', function() {
-  const modal = document.querySelector('.modal');
-  const notif = document.getElementById('notifPanel');
-  const installP = document.getElementById('installPopup');
-  const exitP = document.getElementById('exitPopup');
-  const permP = document.getElementById('permPopup');
+  var modal = document.querySelector('.modal');
+  var notif = document.getElementById('notifPanel');
+  var installP = document.getElementById('installPopup');
+  var exitP = document.getElementById('exitPopup');
+  var permP = document.getElementById('permPopup');
 
   if (installP && installP.style.display !== 'none') { closeInstallPopup(); history.pushState(null,''); return; }
   if (exitP && exitP.style.display !== 'none') { closeExitPopup(); history.pushState(null,''); return; }
-  if (permP && permP.style.display !== 'none') { skipPerm(); history.pushState(null,''); return; }
-  if (modal) { closeModal(); history.pushState(null,''); return; }
-  if (notif.classList.contains('open')) { closeNotifPanel(); history.pushState(null,''); return; }
-  if (activeTabIndex !== 0) { showTab('dashboard', 0); history.pushState(null,''); return; }
+  if (permP && permP.style.display !== 'none') { permP.style.display='none'; history.pushState(null,''); return; }
+  if (modal) { closeModal(); history.pushState(null, ''); return; }
+  if (notif.classList.contains('open')) { closeNotifPanel(); history.pushState(null, ''); return; }
+  if (activeTabIndex !== 0) { showTab('dashboard', 0); history.pushState(null, ''); return; }
 
   // On dashboard — double back to exit
   var now = Date.now();
   if (now - _lastBackTime < 2200) {
-    // Second back within 2.2s → show exit popup
     showExitPopup();
   } else {
     _lastBackTime = now;
     showToast('⬅️ Ek aur baar press karein band karne ke liye', '#0ea5e9');
-    history.pushState(null,'');
+    history.pushState(null, '');
   }
 });
-history.pushState(null,'');
+history.pushState(null, '');
 
-// ── Install Popup Functions ──
-function showInstallPopup() {
-  document.getElementById('installPopup').style.display = 'flex';
-  history.pushState(null,'');
-}
-function closeInstallPopup() {
-  document.getElementById('installPopup').style.display = 'none';
-}
-function doInstallPWA() {
-  closeInstallPopup();
-  if (window._deferredInstall) {
-    window._deferredInstall.prompt();
-    window._deferredInstall.userChoice.then(function(r){
-      if(r.outcome==='accepted') showToast('✅ App install ho rahi hai!','#059669');
-      window._deferredInstall = null;
-    });
-  } else {
-    showToast('Browser mein "Add to Home Screen" use karein','#0ea5e9');
-  }
-}
-
-// ── Exit Popup Functions ──
+// ── Popup Functions ──
 function showExitPopup() {
   document.getElementById('exitPopup').style.display = 'flex';
-  history.pushState(null,'');
+  history.pushState(null, '');
 }
 function closeExitPopup() {
   document.getElementById('exitPopup').style.display = 'none';
 }
 function confirmExit() {
   closeExitPopup();
-  // Try closing the window/app
-  try { window.close(); } catch(e){}
-  // Fallback: go back to OS
-  try { history.go(-(history.length)); } catch(e){}
+  try { window.close(); } catch(e) {}
+  setTimeout(function() { history.go(-(history.length)); }, 200);
 }
 
-// ── Permission Popup Functions ──
+function showInstallPopup() {
+  document.getElementById('installPopup').style.display = 'flex';
+  history.pushState(null, '');
+}
+function closeInstallPopup() {
+  document.getElementById('installPopup').style.display = 'none';
+}
+function doInstallPWA() {
+  closeInstallPopup();
+  if (window._deferredInstallPrompt) {
+    window._deferredInstallPrompt.prompt();
+    window._deferredInstallPrompt.userChoice.then(function(r) {
+      if (r.outcome === 'accepted') showToast('✅ App install ho rahi hai!', '#059669');
+      window._deferredInstallPrompt = null;
+    });
+  } else {
+    showToast('Browser mein "Add to Home Screen" use karein', '#0ea5e9');
+  }
+}
+
 var _permStep = 0;
 function showPermPopup() {
   _permStep = 0;
@@ -692,37 +626,33 @@ function showPermPopup() {
   document.getElementById('permSub').textContent = 'Low stock alerts aur updates ke liye notifications allow karein.';
   document.getElementById('permBtn').textContent = 'Allow Karein';
   document.getElementById('permPopup').style.display = 'flex';
-  history.pushState(null,'');
+  history.pushState(null, '');
 }
 function skipPerm() {
   if (_permStep === 0) {
-    // Move to location step
     _permStep = 1;
     document.getElementById('permTitle').textContent = '📍 Location';
-    document.getElementById('permSub').textContent = 'Weather aur local data ke liye location access allow karein.';
+    document.getElementById('permSub').textContent = 'Weather data ke liye location allow karein.';
     document.getElementById('permBtn').textContent = 'Allow Karein';
   } else {
     document.getElementById('permPopup').style.display = 'none';
-    // After permissions, show install popup if available
-    setTimeout(function(){ if(window._deferredInstall) showInstallPopup(); }, 600);
+    if (window._deferredInstallPrompt) setTimeout(showInstallPopup, 800);
   }
 }
 function grantPerm() {
   if (_permStep === 0) {
-    if('Notification' in window && Notification.permission==='default') {
-      Notification.requestPermission().then(function(){
-        skipPerm();
-      });
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(function() { skipPerm(); });
     } else { skipPerm(); }
   } else {
-    if(navigator.geolocation) {
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        function(pos){ window._gpsLat=pos.coords.latitude; window._gpsLon=pos.coords.longitude; },
-        function(){}, {timeout:10000}
+        function(pos) { window._gpsLat = pos.coords.latitude; window._gpsLon = pos.coords.longitude; },
+        function() {}, { timeout: 10000 }
       );
     }
     document.getElementById('permPopup').style.display = 'none';
-    setTimeout(function(){ if(window._deferredInstall) showInstallPopup(); }, 600);
+    if (window._deferredInstallPrompt) setTimeout(showInstallPopup, 800);
   }
 }
 
@@ -1530,31 +1460,31 @@ window.closeNotifPanel = closeNotifPanel;
 
 
 <script>
-// ── PWA: Install prompt + Service Worker ──
-var deferredPrompt = null;
+// ── PWA Install Prompt ──
+window._deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
-  deferredPrompt = e;
-  window._deferredInstall = e;
-  // Show install button if exists
-  var btn = document.getElementById('pwaInstallBtn');
-  if(btn) btn.style.display = 'flex';
+  window._deferredInstallPrompt = e;
+});
+window.addEventListener('appinstalled', function() {
+  showToast('✅ App install ho gayi!', '#059669');
+  window._deferredInstallPrompt = null;
 });
 
-if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(function(){});
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(function() {});
 }
 
-// Show permission popup on load (replaces direct permission requests)
-window.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function(){
+// ── Show permission popup 2 sec after load ──
+window.addEventListener('load', function() {
+  setTimeout(function() {
     showPermPopup();
   }, 2000);
 });
 
-// Helper: show local notification (for low stock alerts etc)
+// Helper: show notification
 function showNotification(title, body) {
-  if('Notification' in window && Notification.permission === 'granted') {
+  if ('Notification' in window && Notification.permission === 'granted') {
     new Notification(title, {
       body: body,
       icon: 'https://anjalitraders101192-at.github.io/anjalitraders-ims/logo.png',
